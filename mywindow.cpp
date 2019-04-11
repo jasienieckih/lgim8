@@ -132,6 +132,11 @@ void MyWindow::img_draw2()
         // removed
 }
 
+void MyWindow::updateColorSquare()
+{
+    return;
+}
+
 // Function (slot) called when the user press mouse button
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
@@ -141,4 +146,50 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
     x = x * y;
 }
 
+void MyWindow::on_radioRed_toggled(bool checked)
+{
+    if (checked) colorMode = ColorMode::Red;
+    updateColorSquare();
+}
 
+void MyWindow::on_radioGreen_toggled(bool checked)
+{
+    if (checked) colorMode = ColorMode::Green;
+    updateColorSquare();
+}
+
+void MyWindow::on_radioBlue_toggled(bool checked)
+{
+    if (checked) colorMode = ColorMode::Blue;
+    updateColorSquare();
+}
+
+void MyWindow::on_radioHue_toggled(bool checked)
+{
+    if (checked) colorMode = ColorMode::Hue;
+    updateColorSquare();
+}
+
+void MyWindow::on_radioSaturation_toggled(bool checked)
+{
+    if (checked) colorMode = ColorMode::Saturation;
+    updateColorSquare();
+}
+
+void MyWindow::on_radioValue_toggled(bool checked)
+{
+    if (checked) colorMode = ColorMode::Value;
+    updateColorSquare();
+}
+
+void MyWindow::on_sliderRgb_valueChanged(int value)
+{
+    sliderValue = value;
+    updateColorSquare();
+}
+
+void MyWindow::on_sliderHSV_valueChanged(int value)
+{
+    sliderValue = value;
+    updateColorSquare();
+}

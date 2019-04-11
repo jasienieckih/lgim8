@@ -30,6 +30,8 @@ namespace Ui {
     class MyWindow;
 }
 
+enum class ColorMode {Red, Green, Blue, Hue, Saturation, Value, NotSet};
+
 // MyWindow is a subclass of QMainWindow class.
 class MyWindow : public QMainWindow
 {
@@ -42,7 +44,7 @@ public:
     // A typical declaration of constructor in Qt.
     // In the case of our class 'parent' parameter indicates to null
     // because it is a top-level component
-    explicit MyWindow(QWidget *parent = 0);
+    explicit MyWindow(QWidget *parent = nullptr);
 
     // Declaration of destructor
     ~MyWindow();
@@ -71,6 +73,10 @@ private:
     void img_draw1();
     void img_draw2();
 
+    ColorMode colorMode;
+    int sliderValue;
+    void updateColorSquare();
+
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
@@ -82,6 +88,14 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
 
+    void on_radioRed_toggled(bool checked);
+    void on_radioGreen_toggled(bool checked);
+    void on_radioBlue_toggled(bool checked);
+    void on_radioHue_toggled(bool checked);
+    void on_radioSaturation_toggled(bool checked);
+    void on_radioValue_toggled(bool checked);
+    void on_sliderRgb_valueChanged(int value);
+    void on_sliderHSV_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H
