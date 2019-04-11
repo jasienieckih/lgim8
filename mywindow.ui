@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>682</height>
+    <width>953</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,14 @@
    <widget class="QFrame" name="drawFrame">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>600</width>
-      <height>600</height>
+      <x>30</x>
+      <y>40</y>
+      <width>512</width>
+      <height>512</height>
      </rect>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::NoFrame</enum>
     </property>
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
@@ -101,7 +101,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>883</width>
+     <width>953</width>
      <height>21</height>
     </rect>
    </property>
