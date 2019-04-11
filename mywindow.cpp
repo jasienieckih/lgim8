@@ -134,7 +134,46 @@ void MyWindow::img_draw2()
 
 void MyWindow::updateColorSquare()
 {
-    return;
+    uchar *bits = img->bits();
+
+    for (int x = 0; x < 512; ++x)
+    {
+        for (int y = 0; y < 512; ++y)
+        {
+            int pixel = 4 * (512 * y + x);
+            int red, green, blue;
+            switch (colorMode)
+            {
+            case ColorMode::Red:
+                red = sliderValue;
+                green = x / 2;
+                blue = y / 2;
+                break;
+            case ColorMode::Green:
+                green = sliderValue;
+                red = x / 2;
+                blue = y / 2;
+                break;
+            case ColorMode::Blue:
+                blue = sliderValue;
+                green = x / 2;
+                red = y / 2;
+                break;
+            case ColorMode::Hue:
+                break;
+            case ColorMode::Saturation:
+                break;
+            case ColorMode::Value:
+                break;
+            }
+
+            bits[pixel + 0] = blue;
+            bits[pixel + 1] = green;
+            bits[pixel + 2] = red;
+        }
+    }
+
+    update();
 }
 
 // Function (slot) called when the user press mouse button
