@@ -112,9 +112,9 @@ void MyWindow::img_clean()
         for(j=0; j<img_width; j++)
         {
             // to obtain a white color we set each component on max value (255)
-            ptr[img_width*4*i + 4*j]=255; // BLUE component
-            ptr[img_width*4*i + 4*j + 1] = 255; // GREEN component
-            ptr[img_width*4*i + 4*j + 2] = 255; // RED component
+            ptr[img_width*4*i + 4*j]= 0x00; // BLUE component
+            ptr[img_width*4*i + 4*j + 1] = 0x00; // GREEN component
+            ptr[img_width*4*i + 4*j + 2] = 0x00; // RED component
         }
     }
 }
