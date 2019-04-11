@@ -18,3 +18,5 @@ SOURCES += main.cpp\
 HEADERS  += mywindow.h
 
 FORMS    += mywindow.ui
+
+QMAKE_CXXFLAGS += -std=c++11
