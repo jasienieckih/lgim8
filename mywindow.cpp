@@ -123,38 +123,13 @@ void MyWindow::img_clean()
 // Function drawing some pattern
 void MyWindow::img_draw1()
 {
-        unsigned char *ptr;
-        ptr = img->bits();
-
-        int i,j;
-        for(i=0; i<img_height; i++)
-        {
-                for(j=0; j<img_width; j++)
-                {
-                        ptr[img_width*4*i + 4*j]=i;
-                        ptr[img_width*4*i + 4*j + 1] = j;
-                        ptr[img_width*4*i + 4*j + 2] = i*j;
-                }
-        }
+        // removed
 }
 
 // Function drawing other pattern
 void MyWindow::img_draw2()
 {
-        unsigned char *ptr;
-        ptr = img->bits();
-
-        int i,j;
-
-        for(i=0; i<img_height; i++)
-        {
-                for(j=0; j<img_width; j++)
-                {
-                        ptr[img_width*4*i + 4*j]=i;
-                        ptr[img_width*4*i + 4*j + 1] = j;
-                        ptr[img_width*4*i + 4*j + 2] = i+j;
-                }
-        }
+        // removed
 }
 
 // Function (slot) called when the user press mouse button
@@ -163,44 +138,7 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
     // Get coordinates of the mouse cursor
     int x = event->x();
     int y = event->y();
-
-    // x and y are coordinates relative to the application window
-    // we subtract coordinates of the upper left corner of the image
-    // to obtain coordinates relative to the image
-
-    x -= img_x0;
-    y -= img_y0;
-
-    int color = 0;
-    unsigned char *ptr;
-    ptr = img->bits();
-
-    // Checking which mouse button has been pressed
-    if(event->button() == Qt::LeftButton)
-    {
-        // if left we set 0 (black color)
-        color = 0;
-
-    }
-    else
-    {
-        // if right we set 255 (white color)
-        color = 255;
-    }
-
-    // Checking if mouse cursor is in the image border
-    if ((x>=0)&&(y>=0)&&(x<img_width)&&(y<img_height))
-    {
-
-        // Set the pixel color on black or white
-        ptr[img_width*4*y + 4*x] = color;
-        ptr[img_width*4*y + 4*x + 1] = color;
-        ptr[img_width*4*y + 4*x + 2] = color;
-    }
-
-    // We refresh the image
-    update();
-
+    x = x * y;
 }
 
 
