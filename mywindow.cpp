@@ -132,6 +132,20 @@ void MyWindow::img_draw2()
         // removed
 }
 
+double mod(double d, double i)
+{
+    while (d >= i)
+    {
+        d -= i;
+    }
+    return d;
+}
+
+double abs(double x)
+{
+    return (x < 0) ? -x : x;
+}
+
 void MyWindow::updateColorSquare()
 {
     uchar *bits = img->bits();
@@ -142,6 +156,7 @@ void MyWindow::updateColorSquare()
         {
             int pixel = 4 * (512 * y + x);
             int red, green, blue;
+            double hue, saturation, value;
             switch (colorMode)
             {
             case ColorMode::Red:
@@ -160,11 +175,73 @@ void MyWindow::updateColorSquare()
                 red = y / 2;
                 break;
             case ColorMode::Hue:
+                hue = sliderValue / 1000.0;
+                saturation = x / 512.0;
+                value = (511 - y) / 512.0;
                 break;
             case ColorMode::Saturation:
+                saturation = sliderValue / 1000.0;
+                hue = x / 512.0;
+                value = (511 - y) / 512.0;
                 break;
             case ColorMode::Value:
+                value = sliderValue / 1000.0;
+                hue = x / 512.0;
+                saturation = (511 - y) / 512.0;
                 break;
+            case ColorMode::NotSet:
+                break;
+            }
+
+            if (colorMode == ColorMode::Hue
+                    or colorMode == ColorMode::Saturation
+                    or colorMode == ColorMode::Value)
+            {
+                double chroma = value * saturation;
+                double hue_denormalized = hue * 6.0;
+                double chroma_dual = chroma * (1.0 - abs(mod(hue_denormalized, 2.0) - 1.0));
+
+                double rd, gd, bd;
+                rd = gd = bd = 0.0;
+                if (hue_denormalized < 1.0)
+                {
+                    rd = chroma;
+                    gd = chroma_dual;
+                }
+                else if (hue_denormalized < 2.0)
+                {
+                    gd = chroma;
+                    rd = chroma_dual;
+                }
+                else if (hue_denormalized < 3.0)
+                {
+                    gd = chroma;
+                    bd = chroma_dual;
+                }
+                else if (hue_denormalized < 4.0)
+                {
+                    bd = chroma;
+                    gd = chroma_dual;
+                }
+                else if (hue_denormalized < 5.0)
+                {
+                    bd = chroma;
+                    rd = chroma_dual;
+                }
+                else
+                {
+                    rd = chroma;
+                    bd = chroma_dual;
+                }
+
+                double vc_diff = value - chroma;
+                rd += vc_diff;
+                bd += vc_diff;
+                gd += vc_diff;
+
+                red = rd * 256;
+                blue = bd * 256;
+                green = gd * 256;
             }
 
             bits[pixel + 0] = blue;

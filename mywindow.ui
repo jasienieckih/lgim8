@@ -171,7 +171,7 @@
       </rect>
      </property>
      <property name="maximum">
-      <number>255</number>
+      <number>999</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -233,7 +233,7 @@
      <x>0</x>
      <y>0</y>
      <width>953</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
