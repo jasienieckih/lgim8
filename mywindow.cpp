@@ -11,7 +11,10 @@
 // next create object representing the GUI
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MyWindow)
+    ui(new Ui::MyWindow),
+    colorMode(ColorMode::Red),
+    sliderValueRgb(0),
+    sliderValueHsv(0)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -29,6 +32,7 @@ MyWindow::MyWindow(QWidget *parent) :
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
 
+    updateColorSquare();
 }
 
 // Definition of destructor
