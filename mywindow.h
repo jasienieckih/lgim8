@@ -30,7 +30,7 @@ namespace Ui {
     class MyWindow;
 }
 
-enum class ColorMode {Red, Green, Blue, Hue, Saturation, Value, NotSet};
+enum class ColorMode {Red, Green, Blue, Hue, Saturation, Value};
 
 // MyWindow is a subclass of QMainWindow class.
 class MyWindow : public QMainWindow

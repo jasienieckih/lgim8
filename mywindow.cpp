@@ -193,8 +193,6 @@ void MyWindow::updateColorSquare()
                 hue = x / 512.0;
                 saturation = (511 - y) / 512.0;
                 break;
-            case ColorMode::NotSet:
-                break;
             }
 
             if (colorMode == ColorMode::Hue
