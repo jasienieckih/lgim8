@@ -74,7 +74,8 @@ private:
     void img_draw2();
 
     ColorMode colorMode;
-    int sliderValue;
+    int sliderValueRgb;
+    int sliderValueHsv;
     void updateColorSquare();
 
 private slots:

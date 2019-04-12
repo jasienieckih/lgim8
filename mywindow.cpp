@@ -160,32 +160,32 @@ void MyWindow::updateColorSquare()
             switch (colorMode)
             {
             case ColorMode::Red:
-                red = sliderValue;
+                red = sliderValueRgb;
                 green = x / 2;
                 blue = y / 2;
                 break;
             case ColorMode::Green:
-                green = sliderValue;
+                green = sliderValueRgb;
                 red = x / 2;
                 blue = y / 2;
                 break;
             case ColorMode::Blue:
-                blue = sliderValue;
+                blue = sliderValueRgb;
                 green = x / 2;
                 red = y / 2;
                 break;
             case ColorMode::Hue:
-                hue = sliderValue / 1000.0;
+                hue = sliderValueHsv / 1000.0;
                 saturation = x / 512.0;
                 value = (511 - y) / 512.0;
                 break;
             case ColorMode::Saturation:
-                saturation = sliderValue / 1000.0;
+                saturation = sliderValueHsv / 1000.0;
                 hue = x / 512.0;
                 value = (511 - y) / 512.0;
                 break;
             case ColorMode::Value:
-                value = sliderValue / 1000.0;
+                value = sliderValueHsv / 1000.0;
                 hue = x / 512.0;
                 saturation = (511 - y) / 512.0;
                 break;
@@ -300,12 +300,12 @@ void MyWindow::on_radioValue_toggled(bool checked)
 
 void MyWindow::on_sliderRgb_valueChanged(int value)
 {
-    sliderValue = value;
+    sliderValueRgb = value;
     updateColorSquare();
 }
 
 void MyWindow::on_sliderHSV_valueChanged(int value)
 {
-    sliderValue = value;
+    sliderValueHsv = value;
     updateColorSquare();
 }
