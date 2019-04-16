@@ -160,7 +160,9 @@ void MyWindow::updateColorSquare()
         {
             int pixel = 4 * (512 * y + x);
             int red, green, blue;
+            red = green = blue = 0;
             double hue, saturation, value;
+            hue = saturation = value = 0;
             switch (colorMode)
             {
             case ColorMode::Red:
@@ -241,14 +243,14 @@ void MyWindow::updateColorSquare()
                 bd += vc_diff;
                 gd += vc_diff;
 
-                red = rd * 256;
-                blue = bd * 256;
-                green = gd * 256;
+                red = int(rd * 256);
+                blue = int(bd * 256);
+                green = int(gd * 256);
             }
 
-            bits[pixel + 0] = blue;
-            bits[pixel + 1] = green;
-            bits[pixel + 2] = red;
+            bits[pixel + 0] = uchar(blue);
+            bits[pixel + 1] = uchar(green);
+            bits[pixel + 2] = uchar(red);
         }
     }
 
