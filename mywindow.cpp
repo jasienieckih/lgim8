@@ -145,7 +145,7 @@ double mod(double d, double i)
     return d;
 }
 
-double abs(double x)
+double double_abs(double x)
 {
     return (x < 0) ? -x : x;
 }
@@ -201,7 +201,7 @@ void MyWindow::updateColorSquare()
             {
                 double chroma = value * saturation;
                 double hue_denormalized = hue * 6.0;
-                double chroma_dual = chroma * (1.0 - abs(mod(hue_denormalized, 2.0) - 1.0));
+                double chroma_dual = chroma * (1.0 - double_abs(mod(hue_denormalized, 2.0) - 1.0));
 
                 double rd, gd, bd;
                 rd = gd = bd = 0.0;
