@@ -20,3 +20,8 @@ HEADERS  += mywindow.h
 FORMS    += mywindow.ui
 
 QMAKE_CXXFLAGS += -std=c++11
+
+RESOURCES += \
+    lab09resources.qrc
+
+DISTFILES +=

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/lab09">
+        <file>resources/exploration6lgim.jpg</file>
+        <file>resources/morning_glories.jpg</file>
+    </qresource>
+</RCC>
