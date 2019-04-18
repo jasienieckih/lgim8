@@ -26,6 +26,8 @@
 // or released inside a widget, or when the mouse cursor is moved.
 #include <QMouseEvent>
 
+#include "image.h"
+
 namespace Ui {
     class MyWindow;
 }
@@ -70,6 +72,8 @@ private:
     void img_clean();
     void img_draw1();
     void img_draw2();
+
+    std::vector<Image> images;
 
 private slots:
     // Declarations of slots

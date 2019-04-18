@@ -29,6 +29,8 @@ MyWindow::MyWindow(QWidget *parent) :
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
 
+    images.emplace_back(":lab09/resources/exploration6lgim.jpg");
+    images.emplace_back(":lab09/resources/morning_glories.jpg");
 }
 
 // Definition of destructor
@@ -61,7 +63,8 @@ void MyWindow::paintEvent(QPaintEvent*)
 
     // Draws an image 'img' by copying it into the paint device.
     // (img_x0, img_y0) specifies the top-left point in the paint device that is to be drawn onto.
-    p.drawImage(img_x0,img_y0,*img);
+    //p.drawImage(img_x0,img_y0,*img);
+    p.drawImage(img_x0,img_y0, images[0].getImage());
 }
 
 // Function cleaning the image (painting it in all white)

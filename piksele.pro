@@ -13,15 +13,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mywindow.cpp
+            mywindow.cpp \
+            image.cpp
 
-HEADERS  += mywindow.h
+HEADERS  += mywindow.h \
+            image.h \
+            blendingmode.h
 
 FORMS    += mywindow.ui
 
 QMAKE_CXXFLAGS += -std=c++11
 
-RESOURCES += \
-    lab09resources.qrc
+RESOURCES += lab09resources.qrc
 
 DISTFILES +=
