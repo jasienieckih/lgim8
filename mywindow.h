@@ -75,9 +75,6 @@ private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
     // eg. event associated with the GUI (mouse move, button press, etc.)
-    void on_draw2Button_clicked();
-    void on_draw1Button_clicked();
-    void on_cleanButton_clicked();
     void on_exitButton_clicked();
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);

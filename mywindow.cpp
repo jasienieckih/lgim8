@@ -64,30 +64,6 @@ void MyWindow::paintEvent(QPaintEvent*)
     p.drawImage(img_x0,img_y0,*img);
 }
 
-
-// Function (slot) called when the user clicks button "Clean" (cleanButton)
-void MyWindow::on_cleanButton_clicked()
-{
-    // Function 'img_clean()' cleans the image (create all white image)
-    // definition is provided below
-    img_clean();
-
-    // Invoke the 'paintEvent' and repaint the entire widget
-    update();
-}
-
-// Function (slot) called when the user clicks button "Draw 1" (draw1Button)
-void MyWindow::on_draw1Button_clicked()
-{
-    update();
-}
-
-// Function (slot) called when the user clicks button "Draw 2" (draw2Button)
-void MyWindow::on_draw2Button_clicked()
-{
-    update();
-}
-
 // Function cleaning the image (painting it in all white)
 void MyWindow::img_clean()
 {
