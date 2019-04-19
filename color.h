@@ -10,6 +10,9 @@ public:
     Color operator=(Color source);
     Color operator+(Color other);
     Color operator*(float factor);
+    Color operator*=(float factor);
+    bool isLighterThan(Color other);
+    int lightness();
 };
 
 #endif // COLOR_H

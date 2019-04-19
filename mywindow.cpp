@@ -102,6 +102,10 @@ void MyWindow::blendLayer(Image &source)
             case BlendingMode::Normal:
                 result_color = target_color * (1 - alpha) + source_color * alpha;
                 break;
+            case BlendingMode::LightenOnly:
+                result_color = source_color.isLighterThan(target_color) ? source_color : target_color;
+                result_color = target_color * (1 - alpha) + result_color * alpha;
+                break;
             }
             workingImage.setPixel(x, y, result_color);
         }

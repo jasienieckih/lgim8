@@ -1,5 +1,7 @@
 #include "color.h"
 
+#include <cmath>
+
 Color::Color()
 {}
 
@@ -30,5 +32,24 @@ Color Color::operator*(float factor)
     ret.green = green * factor;
     ret.alpha = alpha * factor;
     return ret;
+}
+
+Color Color::operator*=(float factor)
+{
+    red = red * factor;
+    blue = blue * factor;
+    green = green * factor;
+    alpha = alpha * factor;
+    return *this;
+}
+
+bool Color::isLighterThan(Color other)
+{
+    return (lightness() > other.lightness());
+}
+
+int Color::lightness()
+{
+    return red + green + blue;
 }
 
