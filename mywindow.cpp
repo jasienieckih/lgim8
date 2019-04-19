@@ -57,14 +57,44 @@ void MyWindow::on_exitButton_clicked()
 // repaint() or update() was invoked, the widget was obscured and has now been uncovered, or many other reasons.
 void MyWindow::paintEvent(QPaintEvent*)
 {
-
     // The QPainter class performs low-level painting on widgets and other paint devices.
     QPainter p(this);
 
     // Draws an image 'img' by copying it into the paint device.
     // (img_x0, img_y0) specifies the top-left point in the paint device that is to be drawn onto.
-    //p.drawImage(img_x0,img_y0,*img);
-    p.drawImage(img_x0,img_y0, images[0].getImage());
+    p.drawImage(img_x0,img_y0,*img);
+}
+
+void MyWindow::blendLayer(Image &source)
+{
+    uchar *target_bits = img->bits();
+    uchar *source_bits = source.getBits();
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            int pixel = 4 * (y * img_width + x);
+            for (int c = 0; c < 4; ++c)
+            {
+                target_bits[pixel + c] = source_bits[pixel + c];
+            }
+        }
+    }
+}
+
+void MyWindow::updateBlending()
+{
+    int number_of_images = images.size();
+
+    for (int image_index = number_of_images - 1; image_index >= 0; --image_index)
+    {
+        if (images[image_index].visible_)
+        {
+            blendLayer(images[image_index]);
+        }
+    }
+
+    update();
 }
 
 // Function cleaning the image (painting it in all white)
@@ -100,4 +130,59 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
     x -= img_x0;
     y -= img_y0;
+}
+
+BlendingMode stdStringToBlendingMode(const QString &arg)
+{
+    if (arg == "Normal")
+        return BlendingMode::Normal;
+    if (arg == "Lighten only")
+        return BlendingMode::LightenOnly;
+    if (arg == "Darken only")
+        return BlendingMode::DarkenOnly;
+    if (arg == "Add")
+        return BlendingMode::Add;
+    if (arg == "Multiply")
+        return BlendingMode::Multiply;
+    if (arg == "Saturation")
+        return BlendingMode::Saturation;
+    if (arg == "Grain effect")
+        return BlendingMode::GrainEffect;
+    return BlendingMode::Normal;
+}
+
+void MyWindow::on_checkBoxVisible01_toggled(bool checked)
+{
+    images[0].visible_ = checked;
+    updateBlending();
+}
+
+void MyWindow::on_comboBoxMode01_activated(const QString &arg1)
+{
+    images[0].mode = stdStringToBlendingMode(arg1);
+    updateBlending();
+}
+
+void MyWindow::on_sliderAlpha01_valueChanged(int value)
+{
+    images[0].alpha_ = value / 1000.0;
+    updateBlending();
+}
+
+void MyWindow::on_checkBoxVisible02_toggled(bool checked)
+{
+    images[1].visible_ = checked;
+    updateBlending();
+}
+
+void MyWindow::on_comboBoxMode02_activated(const QString &arg1)
+{
+    images[1].mode = stdStringToBlendingMode(arg1);
+    updateBlending();
+}
+
+void MyWindow::on_sliderAlpha02_valueChanged(int value)
+{
+    images[1].alpha_ = value / 1000.0;
+    updateBlending();
 }

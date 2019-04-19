@@ -5,11 +5,17 @@
 
 #include <QImage>
 
+#include "blendingmode.h"
+
 class Image
 {
 public:
     Image(std::string path);
     QImage& getImage();
+    uchar *getBits();
+    bool visible_;
+    BlendingMode mode;
+    float alpha_;
 private:
     QImage qImage;
 };

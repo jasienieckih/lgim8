@@ -74,6 +74,8 @@ private:
     void img_draw2();
 
     std::vector<Image> images;
+    void updateBlending();
+    void blendLayer(Image &source);
 
 private slots:
     // Declarations of slots
@@ -83,6 +85,12 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
 
+    void on_checkBoxVisible01_toggled(bool checked);
+    void on_comboBoxMode01_activated(const QString &arg1);
+    void on_sliderAlpha01_valueChanged(int value);
+    void on_checkBoxVisible02_toggled(bool checked);
+    void on_comboBoxMode02_activated(const QString &arg1);
+    void on_sliderAlpha02_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H
