@@ -253,7 +253,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Morning Glory seedlings</string>
+     <string>Countryside</string>
     </property>
     <widget class="QCheckBox" name="checkBoxVisible03">
      <property name="geometry">
@@ -353,7 +353,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Morning Glory seedlings</string>
+     <string>Potted flowers</string>
     </property>
     <widget class="QCheckBox" name="checkBoxVisible04">
      <property name="geometry">
@@ -453,7 +453,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Morning Glory seedlings</string>
+     <string>Spanish gate</string>
     </property>
     <widget class="QCheckBox" name="checkBoxVisible05">
      <property name="geometry">
