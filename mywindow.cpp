@@ -89,18 +89,21 @@ void MyWindow::initializeCheckerboardBackground()
 
 void MyWindow::blendLayer(Image &source)
 {
-    uchar *target_bits = workingImage.getBits();
-    uchar *source_bits = source.getBits();
-
+    float alpha = source.alpha_;
     for (int x = 0; x < img_width; ++x)
     {
         for (int y = 0; y < img_height; ++y)
         {
-            int pixel = 4 * (y * img_width + x);
-            for (int c = 0; c < 4; ++c)
+            Color target_color = workingImage.getPixel(x, y);
+            Color source_color = source.getPixel(x, y);
+            Color result_color;
+            switch (source.mode)
             {
-                target_bits[pixel + c] = source_bits[pixel + c];
+            case BlendingMode::Normal:
+                result_color = target_color * (1 - alpha) + source_color * alpha;
+                break;
             }
+            workingImage.setPixel(x, y, result_color);
         }
     }
 }
