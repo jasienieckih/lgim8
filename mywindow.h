@@ -93,6 +93,15 @@ private slots:
     void on_checkBoxVisible02_toggled(bool checked);
     void on_comboBoxMode02_activated(const QString &arg1);
     void on_sliderAlpha02_valueChanged(int value);
+    void on_checkBoxVisible03_toggled(bool checked);
+    void on_comboBoxMode03_activated(const QString &arg1);
+    void on_sliderAlpha03_valueChanged(int value);
+    void on_checkBoxVisible04_toggled(bool checked);
+    void on_comboBoxMode04_activated(const QString &arg1);
+    void on_sliderAlpha04_valueChanged(int value);
+    void on_checkBoxVisible05_toggled(bool checked);
+    void on_comboBoxMode05_activated(const QString &arg1);
+    void on_sliderAlpha05_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H

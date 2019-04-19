@@ -2,5 +2,8 @@
     <qresource prefix="/lab09">
         <file>resources/exploration6lgim.jpg</file>
         <file>resources/morning_glories.jpg</file>
+        <file>resources/countryside.jpg</file>
+        <file>resources/flowers.jpg</file>
+        <file>resources/spanish_gate.jpg</file>
     </qresource>
 </RCC>

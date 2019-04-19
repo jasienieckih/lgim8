@@ -43,7 +43,7 @@
      <string>Quit</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="groupBox_1">
     <property name="geometry">
      <rect>
       <x>820</x>
@@ -129,7 +129,7 @@
       </property>
      </item>
     </widget>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="label_1">
      <property name="geometry">
       <rect>
        <x>140</x>

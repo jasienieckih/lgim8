@@ -31,6 +31,9 @@ MyWindow::MyWindow(QWidget *parent) :
 
     images.emplace_back(":lab09/resources/exploration6lgim.jpg");
     images.emplace_back(":lab09/resources/morning_glories.jpg");
+    images.emplace_back(":lab09/resources/countryside.jpg");
+    images.emplace_back(":lab09/resources/flowers.jpg");
+    images.emplace_back(":lab09/resources/spanish_gate.jpg");
 
     updateBlending();
 }
@@ -241,5 +244,59 @@ void MyWindow::on_comboBoxMode02_activated(const QString &arg1)
 void MyWindow::on_sliderAlpha02_valueChanged(int value)
 {
     images[1].alpha_ = value / 1000.0;
+    updateBlending();
+}
+
+void MyWindow::on_checkBoxVisible03_toggled(bool checked)
+{
+    images[2].visible_ = checked;
+    updateBlending();
+}
+
+void MyWindow::on_comboBoxMode03_activated(const QString &arg1)
+{
+    images[2].mode = stdStringToBlendingMode(arg1);
+    updateBlending();
+}
+
+void MyWindow::on_sliderAlpha03_valueChanged(int value)
+{
+    images[2].alpha_ = value / 1000.0;
+    updateBlending();
+}
+
+void MyWindow::on_checkBoxVisible04_toggled(bool checked)
+{
+    images[3].visible_ = checked;
+    updateBlending();
+}
+
+void MyWindow::on_comboBoxMode04_activated(const QString &arg1)
+{
+    images[3].mode = stdStringToBlendingMode(arg1);
+    updateBlending();
+}
+
+void MyWindow::on_sliderAlpha04_valueChanged(int value)
+{
+    images[3].alpha_ = value / 1000.0;
+    updateBlending();
+}
+
+void MyWindow::on_checkBoxVisible05_toggled(bool checked)
+{
+    images[4].visible_ = checked;
+    updateBlending();
+}
+
+void MyWindow::on_comboBoxMode05_activated(const QString &arg1)
+{
+    images[4].mode = stdStringToBlendingMode(arg1);
+    updateBlending();
+}
+
+void MyWindow::on_sliderAlpha05_valueChanged(int value)
+{
+    images[4].alpha_ = value / 1000.0;
     updateBlending();
 }
