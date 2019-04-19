@@ -48,6 +48,11 @@ bool Color::isLighterThan(Color other)
     return (lightness() > other.lightness());
 }
 
+bool Color::isDarkerThan(Color other)
+{
+    return (lightness() < other.lightness());
+}
+
 int Color::lightness()
 {
     return red + green + blue;
