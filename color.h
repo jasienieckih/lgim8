@@ -11,6 +11,7 @@ public:
     Color operator+(Color other);
     Color operator*(float factor);
     Color operator*=(float factor);
+    Color operator*(Color other);
     bool isLighterThan(Color other);
     bool isDarkerThan(Color other);
     int lightness();

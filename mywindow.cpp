@@ -114,6 +114,11 @@ void MyWindow::blendLayer(Image &source)
                 result_color = source_color + target_color;
                 result_color = target_color * (1 - alpha) + result_color * alpha;
                 break;
+            case BlendingMode::Multiply:
+                result_color = source_color * target_color;
+                result_color *= 1.0 / 255;
+                result_color = target_color * (1 - alpha) + result_color * alpha;
+                break;
             }
             workingImage.setPixel(x, y, result_color);
         }

@@ -47,6 +47,16 @@ Color Color::operator*=(float factor)
     return *this;
 }
 
+Color Color::operator*(Color other)
+{
+    Color ret;
+    ret.red = red * other.red;
+    ret.blue = blue * other.blue;
+    ret.green = green * other.green;
+    ret.alpha = alpha * other.alpha;
+    return ret;
+}
+
 bool Color::isLighterThan(Color other)
 {
     return (lightness() > other.lightness());
