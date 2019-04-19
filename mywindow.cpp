@@ -91,6 +91,7 @@ void MyWindow::blendLayer(Image &source)
 {
     uchar *target_bits = workingImage.getBits();
     uchar *source_bits = source.getBits();
+    float alpha = source.alpha_;
 
     for (int x = 0; x < img_width; ++x)
     {
@@ -99,7 +100,12 @@ void MyWindow::blendLayer(Image &source)
             int pixel = 4 * (y * img_width + x);
             for (int c = 0; c < 4; ++c)
             {
-                target_bits[pixel + c] = source_bits[pixel + c];
+                switch (source.mode)
+                {
+                case BlendingMode::Normal:
+                    target_bits[pixel + c] *= 1 - alpha;
+                    target_bits[pixel + c] += alpha * source_bits[pixel + c];
+                }
             }
         }
     }
