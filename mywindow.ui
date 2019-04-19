@@ -33,8 +33,8 @@
    <widget class="QPushButton" name="exitButton">
     <property name="geometry">
      <rect>
-      <x>990</x>
-      <y>560</y>
+      <x>980</x>
+      <y>580</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -53,7 +53,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Image 1</string>
+     <string>Cat on the water</string>
     </property>
     <widget class="QCheckBox" name="checkBoxVisible01">
      <property name="geometry">
@@ -153,7 +153,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Image 2</string>
+     <string>Morning Glory seedlings</string>
     </property>
     <widget class="QCheckBox" name="checkBoxVisible02">
      <property name="geometry">
@@ -230,6 +230,306 @@
      </item>
     </widget>
     <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>30</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Blending mode:</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>210</y>
+      <width>391</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Morning Glory seedlings</string>
+    </property>
+    <widget class="QCheckBox" name="checkBoxVisible03">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>84</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Visible</string>
+     </property>
+    </widget>
+    <widget class="QSlider" name="sliderAlpha03">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>351</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBoxMode03">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>30</y>
+       <width>111</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Normal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Lighten only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Darken only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Add</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Multiply</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Saturation</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Grain extract</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>30</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Blending mode:</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>310</y>
+      <width>391</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Morning Glory seedlings</string>
+    </property>
+    <widget class="QCheckBox" name="checkBoxVisible04">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>84</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Visible</string>
+     </property>
+    </widget>
+    <widget class="QSlider" name="sliderAlpha04">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>351</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBoxMode04">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>30</y>
+       <width>111</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Normal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Lighten only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Darken only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Add</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Multiply</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Saturation</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Grain extract</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>30</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Blending mode:</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_5">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>410</y>
+      <width>391</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Morning Glory seedlings</string>
+    </property>
+    <widget class="QCheckBox" name="checkBoxVisible05">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>84</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Visible</string>
+     </property>
+    </widget>
+    <widget class="QSlider" name="sliderAlpha05">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>351</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBoxMode05">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>30</y>
+       <width>111</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Normal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Lighten only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Darken only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Add</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Multiply</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Saturation</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Grain extract</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
        <x>140</x>
