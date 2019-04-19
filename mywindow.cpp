@@ -87,6 +87,13 @@ void MyWindow::initializeCheckerboardBackground()
     }
 }
 
+inline uchar max(uchar a, uchar b)
+{
+    if (a > b)
+        return a;
+    return b;
+}
+
 void MyWindow::blendLayer(Image &source)
 {
     uchar *target_bits = workingImage.getBits();
@@ -105,6 +112,10 @@ void MyWindow::blendLayer(Image &source)
                 case BlendingMode::Normal:
                     target_bits[pixel + c] *= 1 - alpha;
                     target_bits[pixel + c] += alpha * source_bits[pixel + c];
+                    break;
+                case BlendingMode::LightenOnly:
+                    target_bits[pixel + c] = max(target_bits[pixel + c], alpha * source_bits[pixel + c]);
+                    break;
                 }
             }
         }
