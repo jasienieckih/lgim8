@@ -10,8 +10,10 @@
 class Image
 {
 public:
+    Image();
     Image(std::string path);
     QImage& getImage();
+    void clean();
     uchar *getBits();
     bool visible_;
     BlendingMode mode;

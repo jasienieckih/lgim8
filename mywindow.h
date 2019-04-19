@@ -74,9 +74,10 @@ private:
     void img_draw2();
 
     std::vector<Image> images;
+    Image workingImage;
     void updateBlending();
     void blendLayer(Image &source);
-
+    void initializeCheckerboardBackground();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,

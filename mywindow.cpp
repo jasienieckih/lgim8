@@ -31,6 +31,8 @@ MyWindow::MyWindow(QWidget *parent) :
 
     images.emplace_back(":lab09/resources/exploration6lgim.jpg");
     images.emplace_back(":lab09/resources/morning_glories.jpg");
+
+    updateBlending();
 }
 
 // Definition of destructor
@@ -63,12 +65,33 @@ void MyWindow::paintEvent(QPaintEvent*)
     // Draws an image 'img' by copying it into the paint device.
     // (img_x0, img_y0) specifies the top-left point in the paint device that is to be drawn onto.
     p.drawImage(img_x0,img_y0,*img);
+    p.drawImage(img_x0, img_y0, workingImage.getImage());
+}
+
+void MyWindow::initializeCheckerboardBackground()
+{
+    uchar* bits = img->bits();
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            int pixel = 4 * (img_width * y + x);
+            uchar color = 0x66;
+            if (((x / 8) % 2) ^ ((y / 8) % 2))
+                color = 0x99;
+            for (int c = 0; c < 3; ++c)
+            {
+                bits[pixel + c] = color;
+            }
+        }
+    }
 }
 
 void MyWindow::blendLayer(Image &source)
 {
-    uchar *target_bits = img->bits();
+    uchar *target_bits = workingImage.getBits();
     uchar *source_bits = source.getBits();
+
     for (int x = 0; x < img_width; ++x)
     {
         for (int y = 0; y < img_height; ++y)
@@ -85,7 +108,8 @@ void MyWindow::blendLayer(Image &source)
 void MyWindow::updateBlending()
 {
     int number_of_images = images.size();
-
+    initializeCheckerboardBackground();
+    workingImage.clean();
     for (int image_index = number_of_images - 1; image_index >= 0; --image_index)
     {
         if (images[image_index].visible_)
@@ -93,7 +117,6 @@ void MyWindow::updateBlending()
             blendLayer(images[image_index]);
         }
     }
-
     update();
 }
 
