@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
             mywindow.cpp \
             image.cpp \
-    color.cpp
+    color.cpp \
+    colorhsv.cpp
 
 HEADERS  += mywindow.h \
             image.h \
             blendingmode.h \
-    color.h
+    color.h \
+    colorhsv.h
 
 FORMS    += mywindow.ui
 

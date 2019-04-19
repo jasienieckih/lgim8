@@ -97,6 +97,8 @@ void MyWindow::blendLayer(Image &source)
             Color target_color = workingImage.getPixel(x, y);
             Color source_color = source.getPixel(x, y);
             Color result_color;
+            ColorHsv source_hsv(source_color);
+            ColorHsv target_hsv(target_color);
             const Color middle_gray(128, 128, 128);
             switch (source.mode)
             {
@@ -119,6 +121,11 @@ void MyWindow::blendLayer(Image &source)
             case BlendingMode::Multiply:
                 result_color = source_color * target_color;
                 result_color *= 1.0 / 255;
+                result_color = target_color * (1 - alpha) + result_color * alpha;
+                break;
+            case BlendingMode::Saturation:
+                target_hsv.saturation = source_hsv.saturation;
+                result_color = target_hsv.convertToColor();
                 result_color = target_color * (1 - alpha) + result_color * alpha;
                 break;
             case BlendingMode::GrainExtract:

@@ -27,6 +27,7 @@
 #include <QMouseEvent>
 
 #include "image.h"
+#include "colorhsv.h"
 
 namespace Ui {
     class MyWindow;
