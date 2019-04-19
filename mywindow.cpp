@@ -97,6 +97,7 @@ void MyWindow::blendLayer(Image &source)
             Color target_color = workingImage.getPixel(x, y);
             Color source_color = source.getPixel(x, y);
             Color result_color;
+            const Color middle_gray(128, 128, 128);
             switch (source.mode)
             {
             case BlendingMode::Normal:
@@ -112,11 +113,17 @@ void MyWindow::blendLayer(Image &source)
                 break;
             case BlendingMode::Add:
                 result_color = source_color + target_color;
+                result_color.normalize();
                 result_color = target_color * (1 - alpha) + result_color * alpha;
                 break;
             case BlendingMode::Multiply:
                 result_color = source_color * target_color;
                 result_color *= 1.0 / 255;
+                result_color = target_color * (1 - alpha) + result_color * alpha;
+                break;
+            case BlendingMode::GrainExtract:
+                result_color = target_color - source_color + middle_gray;
+                result_color.normalize();
                 result_color = target_color * (1 - alpha) + result_color * alpha;
                 break;
             }
@@ -189,8 +196,8 @@ BlendingMode stdStringToBlendingMode(const QString &arg)
         return BlendingMode::Multiply;
     if (arg == "Saturation")
         return BlendingMode::Saturation;
-    if (arg == "Grain effect")
-        return BlendingMode::GrainEffect;
+    if (arg == "Grain extract")
+        return BlendingMode::GrainExtract;
     return BlendingMode::Normal;
 }
 

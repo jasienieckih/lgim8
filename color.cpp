@@ -3,6 +3,18 @@
 #include <cmath>
 
 Color::Color()
+    :
+      red(0),
+      green(0),
+      blue(0),
+      alpha(0)
+{}
+
+Color::Color(int red_, int green_, int blue_):
+    red(red_),
+    green(green_),
+    blue(blue_),
+    alpha(0xff)
 {}
 
 Color Color::operator=(Color source)
@@ -21,10 +33,16 @@ Color Color::operator+(Color other)
     ret.blue = blue + other.blue;
     ret.green = green + other.green;
     ret.alpha = alpha + other.alpha;
-    if (ret.red > 0xff) ret.red = 0xff;
-    if (ret.blue > 0xff) ret.blue = 0xff;
-    if (ret.green > 0xff) ret.green = 0xff;
-    if (ret.alpha > 0xff) ret.alpha = 0xff;
+    return ret;
+}
+
+Color Color::operator-(Color other)
+{
+    Color ret;
+    ret.red = red - other.red;
+    ret.blue = blue - other.blue;
+    ret.green = green - other.green;
+    ret.alpha = alpha - other.alpha;
     return ret;
 }
 
@@ -55,6 +73,18 @@ Color Color::operator*(Color other)
     ret.green = green * other.green;
     ret.alpha = alpha * other.alpha;
     return ret;
+}
+
+void Color::normalize()
+{
+    if (red < 0x00) red = 0x00;
+    if (blue < 0x00) blue = 0x00;
+    if (green < 0x00) green = 0x00;
+    if (alpha < 0x00) alpha = 0x00;
+    if (red > 0xff) red = 0xff;
+    if (blue > 0xff) blue = 0xff;
+    if (green > 0xff) green = 0xff;
+    if (alpha > 0xff) alpha = 0xff;
 }
 
 bool Color::isLighterThan(Color other)
