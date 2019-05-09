@@ -71,6 +71,9 @@ private:
     void img_draw1();
     void img_draw2();
 
+    // task-specific fields
+    int maskSize;
+
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
@@ -82,6 +85,10 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
 
+    // task-specific slots
+    void on_maskSizeBox_valueChanged(int arg1);
+    void on_dilateButton_clicked();
+    void on_erodeButton_clicked();
 };
 
 #endif // MYWINDOW_H

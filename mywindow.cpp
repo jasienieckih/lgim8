@@ -11,7 +11,8 @@
 // next create object representing the GUI
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MyWindow)
+    ui(new Ui::MyWindow),
+    maskSize(0)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -121,4 +122,34 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
     x -= img_x0;
     y -= img_y0;
+}
+
+void MyWindow::on_maskSizeBox_valueChanged(int arg1)
+{
+    maskSize = arg1;
+}
+
+void MyWindow::on_dilateButton_clicked()
+{
+    //
+}
+
+void MyWindow::on_erodeButton_clicked()
+{
+    //
+}
+
+void MyWindow::on_openingButton_clicked()
+{
+    //
+}
+
+void MyWindow::on_closureButton_clicked()
+{
+    //
+}
+
+void MyWindow::on_openFileButton_clicked()
+{
+    //
 }
