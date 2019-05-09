@@ -42,7 +42,7 @@ public:
     // A typical declaration of constructor in Qt.
     // In the case of our class 'parent' parameter indicates to null
     // because it is a top-level component
-    explicit MyWindow(QWidget *parent = 0);
+    explicit MyWindow(QWidget *parent = nullptr);
 
     // Declaration of destructor
     ~MyWindow();
