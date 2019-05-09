@@ -26,6 +26,8 @@
 // or released inside a widget, or when the mouse cursor is moved.
 #include <QMouseEvent>
 
+#include "point.h"
+
 namespace Ui {
     class MyWindow;
 }
@@ -53,7 +55,7 @@ private:
     // Access to individual elements of the GUI is obtained by the variable "ui"
     Ui::MyWindow *ui;
 
-    // 'img' is a field storing the image
+    // 'img' is a field storing the
     QImage *img;
 
     // width of the image
@@ -71,6 +73,13 @@ private:
     void img_draw1();
     void img_draw2();
 
+    // task-specific fields
+    Point translation;
+    Point scaling;
+    bool scaleTogether;
+    int rotation;
+    Point shearing;
+
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
@@ -82,6 +91,15 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
 
+    // task-specific slots
+    void on_translationXSlider_valueChanged(int value);
+    void on_translationYSlider_valueChanged(int value);
+    void on_scalingXSlider_valueChanged(int value);
+    void on_scalingYSlider_valueChanged(int value);
+    void on_scalingTogetherBox_toggled(bool checked);
+    void on_rotationSlider_valueChanged(int value);
+    void on_shearingXSlider_valueChanged(int value);
+    void on_shearingYSlider_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H

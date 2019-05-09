@@ -11,7 +11,12 @@
 // next create object representing the GUI
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MyWindow)
+    ui(new Ui::MyWindow),
+    translation(0, 0),
+    scaling(0, 0),
+    scaleTogether(false),
+    rotation(0),
+    shearing(0, 0)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -121,4 +126,44 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
     x -= img_x0;
     y -= img_y0;
+}
+
+void MyWindow::on_translationXSlider_valueChanged(int value)
+{
+    translation.set(value, translation.y());
+}
+
+void MyWindow::on_translationYSlider_valueChanged(int value)
+{
+    translation.set(translation.x(), value);
+}
+
+void MyWindow::on_scalingXSlider_valueChanged(int value)
+{
+    scaling.set(value, scaling.y());
+}
+
+void MyWindow::on_scalingYSlider_valueChanged(int value)
+{
+    scaling.set(scaling.x(), value);
+}
+
+void MyWindow::on_scalingTogetherBox_toggled(bool checked)
+{
+    scaleTogether = checked;
+}
+
+void MyWindow::on_rotationSlider_valueChanged(int value)
+{
+    rotation = value;
+}
+
+void MyWindow::on_shearingXSlider_valueChanged(int value)
+{
+    shearing.set(value, shearing.y());
+}
+
+void MyWindow::on_shearingYSlider_valueChanged(int value)
+{
+    shearing.set(shearing.x(), value);
 }
