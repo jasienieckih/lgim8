@@ -14,7 +14,7 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    maskSize(0)
+    maskSize(1)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -128,8 +128,6 @@ bool isPixelDark(QRgb pixel)
 
 void MyWindow::loadPictureFromFile(QString filename)
 {
-    unsigned char *bits;
-    bits = img->bits();
     QImage loadedImage(filename);
 
     img_clean();
@@ -163,6 +161,44 @@ void MyWindow::loadPictureFromFile(QString filename)
     update();
 }
 
+bool MyWindow::arePixelCoordsValid(int x, int y)
+{
+    if (x >= 0 and x < img_width and y >= 0 and y < img_height)
+        return true;
+    return false;
+}
+
+void MyWindow::dilate()
+{
+    QImage copy = img->copy(0, 0, img_width, img_height);
+    const QRgb black = 0x000000;
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            bool encountered = false;
+            for (int xd = -maskSize; xd <= maskSize /*and !encountered*/; ++xd)
+            {
+                for (int yd = -maskSize; yd <= maskSize /*and !encountered*/; ++yd)
+                {
+                    if ((xd != 0 or yd != 0)
+                            and arePixelCoordsValid(x + xd, y + yd)
+                            and copy.pixel(x + xd, y + yd) % 2 == 0)
+                    {
+                        encountered = true;
+                    }
+                }
+            }
+            if (encountered)
+            {
+                img->setPixel(x, y, black);
+            }
+        }
+    }
+
+    update();
+}
+
 // Function (slot) called when the user press mouse button
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
@@ -180,7 +216,7 @@ void MyWindow::on_maskSizeBox_valueChanged(int arg1)
 
 void MyWindow::on_dilateButton_clicked()
 {
-    //
+    dilate();
 }
 
 void MyWindow::on_erodeButton_clicked()

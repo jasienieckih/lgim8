@@ -76,6 +76,8 @@ private:
 
     // task-specific member functions
     void loadPictureFromFile(QString filename);
+    void dilate();
+    bool arePixelCoordsValid(int x, int y);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
