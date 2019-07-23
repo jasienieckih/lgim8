@@ -185,9 +185,11 @@ bool MyWindow::arePixelCoordsValid(int x, int y)
 void MyWindow::dilate_or_erode(bool erode)
 {
     QImage copy = img->copy(0, 0, img_width, img_height);
-    const QRgb black = 0x000000;
-    const QRgb white = 0xffffff;
-    const QRgb colorToUse = erode ? white : black;
+    uchar *copyBits = copy.bits();
+    uchar *imgBits = img->bits();
+    const uchar black = 0x00;
+    const uchar white = 0xff;
+    uchar colorToUse = erode ? white : black;
 
     for (int x = 0; x < img_width; ++x)
     {
@@ -200,7 +202,7 @@ void MyWindow::dilate_or_erode(bool erode)
                 {
                     if ((xd != 0 or yd != 0)
                             and arePixelCoordsValid(x + xd, y + yd)
-                            and copy.pixel(x + xd, y + yd) % 2 == erode)
+                            and copyBits[bitsCoordFromXy(x + xd, y + yd)] % 2 == erode)
                     {
                         encountered = true;
                     }
@@ -208,7 +210,10 @@ void MyWindow::dilate_or_erode(bool erode)
             }
             if (encountered)
             {
-                img->setPixel(x, y, colorToUse);
+                int coords = bitsCoordFromXy(x, y);
+                imgBits[coords    ] = colorToUse;
+                imgBits[coords + 1] = colorToUse;
+                imgBits[coords + 2] = colorToUse;
             }
         }
     }
