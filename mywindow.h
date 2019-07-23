@@ -79,6 +79,8 @@ private:
     void dilate();
     bool arePixelCoordsValid(int x, int y);
     void erode();
+    void opening();
+    void closure();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,

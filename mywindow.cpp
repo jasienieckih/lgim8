@@ -230,6 +230,18 @@ void MyWindow::erode()
     update();
 }
 
+void MyWindow::opening()
+{
+    erode();
+    dilate();
+}
+
+void MyWindow::closure()
+{
+    dilate();
+    erode();
+}
+
 // Function (slot) called when the user press mouse button
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
@@ -257,12 +269,12 @@ void MyWindow::on_erodeButton_clicked()
 
 void MyWindow::on_openingButton_clicked()
 {
-    //
+    opening();
 }
 
 void MyWindow::on_closureButton_clicked()
 {
-    //
+    closure();
 }
 
 void MyWindow::on_openFileButton_clicked()
