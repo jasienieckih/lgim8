@@ -199,6 +199,37 @@ void MyWindow::dilate()
     update();
 }
 
+void MyWindow::erode()
+{
+    QImage copy = img->copy(0, 0, img_width, img_height);
+    const QRgb white = 0xffffff;
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            bool encountered = false;
+            for (int xd = -maskSize; xd <= maskSize /*and !encountered*/; ++xd)
+            {
+                for (int yd = -maskSize; yd <= maskSize /*and !encountered*/; ++yd)
+                {
+                    if ((xd != 0 or yd != 0)
+                            and arePixelCoordsValid(x + xd, y + yd)
+                            and copy.pixel(x + xd, y + yd) % 2 == 1)
+                    {
+                        encountered = true;
+                    }
+                }
+            }
+            if (encountered)
+            {
+                img->setPixel(x, y, white);
+            }
+        }
+    }
+
+    update();
+}
+
 // Function (slot) called when the user press mouse button
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
@@ -221,7 +252,7 @@ void MyWindow::on_dilateButton_clicked()
 
 void MyWindow::on_erodeButton_clicked()
 {
-    //
+    erode();
 }
 
 void MyWindow::on_openingButton_clicked()

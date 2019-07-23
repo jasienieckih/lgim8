@@ -78,6 +78,7 @@ private:
     void loadPictureFromFile(QString filename);
     void dilate();
     bool arePixelCoordsValid(int x, int y);
+    void erode();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
