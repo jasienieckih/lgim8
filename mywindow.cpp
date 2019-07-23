@@ -117,6 +117,11 @@ void MyWindow::img_clean()
     }
 }
 
+int MyWindow::bitsCoordFromXy(int x, int y)
+{
+    return 4 * (img_width * y + x);
+}
+
 bool isPixelDark(QRgb pixel)
 {
     unsigned int blue = pixel % 0xff;
@@ -130,6 +135,8 @@ bool isPixelDark(QRgb pixel)
 void MyWindow::loadPictureFromFile(QString filename)
 {
     QImage loadedImage(filename);
+    uchar *loadedBits = loadedImage.bits();
+    uchar *imgBits = img->bits();
 
     img_clean();
 
@@ -150,11 +157,16 @@ void MyWindow::loadPictureFromFile(QString filename)
     {
         for (int y = 0; y < loadedImage.height() and y < img_height; ++y)
         {
-            const QRgb black = 0x000000;
-            QRgb pixel = loadedImage.pixel(x, y);
+            int coords = bitsCoordFromXy(x, y);
+            QRgb pixel = ((QRgb)loadedBits[coords + 2] << 16)
+                       + ((QRgb)loadedBits[coords + 1] << 8 )
+                       + ((QRgb)loadedBits[coords    ]      );
             if (isPixelDark(pixel))
             {
-                img->setPixel(xmargin + x, ymargin + y, black);
+                coords = bitsCoordFromXy(xmargin + x, ymargin + y);
+                imgBits[coords    ] = 0x00;
+                imgBits[coords + 1] = 0x00;
+                imgBits[coords + 2] = 0x00;
             }
         }
     }

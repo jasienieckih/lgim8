@@ -83,6 +83,7 @@ private:
     void opening();
     void closure();
     void dilate_or_erode(bool erode);
+    int bitsCoordFromXy(int x, int y);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
