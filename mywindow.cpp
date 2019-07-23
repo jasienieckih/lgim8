@@ -14,7 +14,8 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    maskSize(1)
+    maskSize(1),
+    lastLoadedFile("")
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -281,5 +282,16 @@ void MyWindow::on_openFileButton_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose image..."), "/", tr("Image Files (*.png *.jpg *.bmp)"));
     if (filename != "")
+    {
+        lastLoadedFile = filename;
         loadPictureFromFile(filename);
+    }
+}
+
+void MyWindow::on_refreshButton_clicked()
+{
+    if (lastLoadedFile != "")
+    {
+        loadPictureFromFile(lastLoadedFile);
+    }
 }

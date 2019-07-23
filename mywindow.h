@@ -73,6 +73,7 @@ private:
 
     // task-specific fields
     int maskSize;
+    QString lastLoadedFile;
 
     // task-specific member functions
     void loadPictureFromFile(QString filename);
@@ -99,6 +100,7 @@ private slots:
     void on_openingButton_clicked();
     void on_closureButton_clicked();
     void on_openFileButton_clicked();
+    void on_refreshButton_clicked();
 };
 
 #endif // MYWINDOW_H
