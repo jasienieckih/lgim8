@@ -177,9 +177,9 @@ void MyWindow::dilate()
         for (int y = 0; y < img_height; ++y)
         {
             bool encountered = false;
-            for (int xd = -maskSize; xd <= maskSize /*and !encountered*/; ++xd)
+            for (int xd = -maskSize; xd <= maskSize and !encountered; ++xd)
             {
-                for (int yd = -maskSize; yd <= maskSize /*and !encountered*/; ++yd)
+                for (int yd = -maskSize; yd <= maskSize and !encountered; ++yd)
                 {
                     if ((xd != 0 or yd != 0)
                             and arePixelCoordsValid(x + xd, y + yd)
@@ -208,9 +208,9 @@ void MyWindow::erode()
         for (int y = 0; y < img_height; ++y)
         {
             bool encountered = false;
-            for (int xd = -maskSize; xd <= maskSize /*and !encountered*/; ++xd)
+            for (int xd = -maskSize; xd <= maskSize and !encountered; ++xd)
             {
-                for (int yd = -maskSize; yd <= maskSize /*and !encountered*/; ++yd)
+                for (int yd = -maskSize; yd <= maskSize and !encountered; ++yd)
                 {
                     if ((xd != 0 or yd != 0)
                             and arePixelCoordsValid(x + xd, y + yd)
