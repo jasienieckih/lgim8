@@ -89,6 +89,9 @@ private slots:
     void on_maskSizeBox_valueChanged(int arg1);
     void on_dilateButton_clicked();
     void on_erodeButton_clicked();
+    void on_openingButton_clicked();
+    void on_closureButton_clicked();
+    void on_openFileButton_clicked();
 };
 
 #endif // MYWINDOW_H
