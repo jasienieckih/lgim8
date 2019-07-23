@@ -169,10 +169,14 @@ bool MyWindow::arePixelCoordsValid(int x, int y)
     return false;
 }
 
-void MyWindow::dilate()
+// if the argument is true uses erode, otherwise uses dilate
+void MyWindow::dilate_or_erode(bool erode)
 {
     QImage copy = img->copy(0, 0, img_width, img_height);
     const QRgb black = 0x000000;
+    const QRgb white = 0xffffff;
+    const QRgb colorToUse = erode ? white : black;
+
     for (int x = 0; x < img_width; ++x)
     {
         for (int y = 0; y < img_height; ++y)
@@ -184,7 +188,7 @@ void MyWindow::dilate()
                 {
                     if ((xd != 0 or yd != 0)
                             and arePixelCoordsValid(x + xd, y + yd)
-                            and copy.pixel(x + xd, y + yd) % 2 == 0)
+                            and copy.pixel(x + xd, y + yd) % 2 == erode)
                     {
                         encountered = true;
                     }
@@ -192,7 +196,7 @@ void MyWindow::dilate()
             }
             if (encountered)
             {
-                img->setPixel(x, y, black);
+                img->setPixel(x, y, colorToUse);
             }
         }
     }
@@ -200,35 +204,14 @@ void MyWindow::dilate()
     update();
 }
 
+void MyWindow::dilate()
+{
+    dilate_or_erode(false);
+}
+
 void MyWindow::erode()
 {
-    QImage copy = img->copy(0, 0, img_width, img_height);
-    const QRgb white = 0xffffff;
-    for (int x = 0; x < img_width; ++x)
-    {
-        for (int y = 0; y < img_height; ++y)
-        {
-            bool encountered = false;
-            for (int xd = -maskSize; xd <= maskSize and !encountered; ++xd)
-            {
-                for (int yd = -maskSize; yd <= maskSize and !encountered; ++yd)
-                {
-                    if ((xd != 0 or yd != 0)
-                            and arePixelCoordsValid(x + xd, y + yd)
-                            and copy.pixel(x + xd, y + yd) % 2 == 1)
-                    {
-                        encountered = true;
-                    }
-                }
-            }
-            if (encountered)
-            {
-                img->setPixel(x, y, white);
-            }
-        }
-    }
-
-    update();
+    dilate_or_erode(true);
 }
 
 void MyWindow::opening()

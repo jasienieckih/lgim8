@@ -82,6 +82,7 @@ private:
     void erode();
     void opening();
     void closure();
+    void dilate_or_erode(bool erode);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
