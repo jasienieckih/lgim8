@@ -6,6 +6,8 @@
 // It is based on data from an XML file "mywindow.ui"
 #include "ui_mywindow.h"
 
+#include <QFileDialog>
+
 // The definition of the constructor of MyWindow class
 // First call the constructor of the parent class,
 // next create object representing the GUI
@@ -29,7 +31,7 @@ MyWindow::MyWindow(QWidget *parent) :
     // Create an object of QImage class of appropriate width
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
-
+    img_clean();
 }
 
 // Definition of destructor
@@ -107,11 +109,58 @@ void MyWindow::img_clean()
         for(j=0; j<img_width; j++)
         {
             // to obtain a white color we set each component on max value (255)
-            ptr[img_width*4*i + 4*j]=255; // BLUE component
+            ptr[img_width*4*i + 4*j] = 255; // BLUE component
             ptr[img_width*4*i + 4*j + 1] = 255; // GREEN component
             ptr[img_width*4*i + 4*j + 2] = 255; // RED component
         }
     }
+}
+
+bool isPixelDark(QRgb pixel)
+{
+    unsigned int blue = pixel % 0xff;
+    pixel /= 0xff;
+    unsigned int green = pixel % 0xff;
+    pixel /= 0xff;
+    unsigned int red = pixel % 0xff;
+    return blue + green + red < 0x17f;
+}
+
+void MyWindow::loadPictureFromFile(QString filename)
+{
+    unsigned char *bits;
+    bits = img->bits();
+    QImage loadedImage(filename);
+
+    img_clean();
+
+    int xmargin = 0;
+    int xdelta = img_width - loadedImage.width();
+    if (xdelta > 0)
+    {
+        xmargin = xdelta / 2;
+    }
+    int ymargin = 0;
+    int ydelta = img_height - loadedImage.height();
+    if (ydelta > 0)
+    {
+        ymargin = ydelta / 2;
+    }
+
+    for (int x = 0; x < loadedImage.width() and x < img_width; ++x)
+    {
+        for (int y = 0; y < loadedImage.height() and y < img_height; ++y)
+        {
+            const QRgb black = 0x000000;
+            QRgb pixel = loadedImage.pixel(x, y);
+            if (isPixelDark(pixel))
+            {
+                img->setPixel(xmargin + x, ymargin + y, black);
+            }
+        }
+    }
+
+    update();
 }
 
 // Function (slot) called when the user press mouse button
@@ -151,5 +200,7 @@ void MyWindow::on_closureButton_clicked()
 
 void MyWindow::on_openFileButton_clicked()
 {
-    //
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose image..."), "/", tr("Image Files (*.png *.jpg *.bmp)"));
+    if (filename != "")
+        loadPictureFromFile(filename);
 }

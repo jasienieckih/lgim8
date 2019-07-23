@@ -74,6 +74,8 @@ private:
     // task-specific fields
     int maskSize;
 
+    // task-specific member functions
+    void loadPictureFromFile(QString filename);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
