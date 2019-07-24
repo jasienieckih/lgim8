@@ -79,6 +79,7 @@ private:
     QImage sourceImage;
     Matrix translationMatrix;
     Matrix scalingMatrix;
+    Matrix rotationMatrix;
 
     // task-specific functions
     void updateTransformation();
