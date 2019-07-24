@@ -82,6 +82,7 @@ private:
     Point shearing;
     QImage sourceImage;
     Matrix translationMatrix;
+    Matrix scalingMatrix;
 
     // task-specific functions
     void updateTransformation();

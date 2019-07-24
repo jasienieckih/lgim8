@@ -136,12 +136,22 @@ void MyWindow::updateTransformation()
     uchar* imgBits = img->bits();
     uchar* sourceBits = sourceImage.bits();
 
+    Matrix prescalingMatrix;
+    prescalingMatrix.set(0, 2, 300);
+    prescalingMatrix.set(1, 2, 300);
+    Matrix postscalingMatrix;
+    postscalingMatrix.set(0, 2, -300);
+    postscalingMatrix.set(1, 2, -300);
+
+    Matrix transformationMatrix = translationMatrix;
+    transformationMatrix = transformationMatrix * prescalingMatrix * scalingMatrix * postscalingMatrix;
+
     for (int x = 0; x < img_width; ++x)
     {
         for (int y = 0; y < img_height; ++y)
         {
             Point p = Point(x, y);
-            Point t = translationMatrix * p;
+            Point t = transformationMatrix * p;
             t = t.getRounded();
             if (    t.x() > 150 and t.x() < 150 + 300
                 and t.y() > 150 and t.y() < 150 + 300)
@@ -188,12 +198,18 @@ void MyWindow::on_translationYSlider_valueChanged(int value)
 
 void MyWindow::on_scalingXSlider_valueChanged(int value)
 {
+    double realValue = 1000.0 / value;
+    scalingMatrix.set(0, 0, realValue);
     scaling.setX(value);
+    updateTransformation();
 }
 
 void MyWindow::on_scalingYSlider_valueChanged(int value)
 {
+    double realValue = 1000.0 / value;
+    scalingMatrix.set(1, 1, realValue);
     scaling.setY(value);
+    updateTransformation();
 }
 
 void MyWindow::on_scalingTogetherBox_toggled(bool checked)

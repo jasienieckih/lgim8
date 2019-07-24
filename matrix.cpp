@@ -18,7 +18,7 @@ Matrix Matrix::operator*(const Matrix other) const
     {
         for (int j = 0; j < 3; ++j)
         {
-            int tmp = 0;
+            double tmp = 0;
             for (int k = 0; k < 3; ++k)
             {
                 tmp += values[i][k] * other.values[k][j];
