@@ -75,11 +75,7 @@ private:
     void img_draw2();
 
     // task-specific fields
-    Point translation;
-    Point scaling;
     bool scaleTogether;
-    int rotation;
-    Point shearing;
     QImage sourceImage;
     Matrix translationMatrix;
     Matrix scalingMatrix;

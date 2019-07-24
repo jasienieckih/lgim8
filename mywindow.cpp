@@ -12,11 +12,7 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    translation(0, 0),
-    scaling(0, 0),
     scaleTogether(false),
-    rotation(0),
-    shearing(0, 0),
     sourceImage(":res/logo_umk_300x300.png")
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
@@ -183,7 +179,6 @@ void MyWindow::on_translationXSlider_valueChanged(int value)
     value = value - 1000;
     value *= 0.5;
     translationMatrix.set(0, 2, -value);
-    translation.setX(value);
     updateTransformation();
 }
 
@@ -192,7 +187,6 @@ void MyWindow::on_translationYSlider_valueChanged(int value)
     value = value - 1000;
     value *= 0.5;
     translationMatrix.set(1, 2, -value);
-    translation.setY(value);
     updateTransformation();
 }
 
@@ -200,7 +194,6 @@ void MyWindow::on_scalingXSlider_valueChanged(int value)
 {
     double realValue = 1000.0 / value;
     scalingMatrix.set(0, 0, realValue);
-    scaling.setX(value);
     updateTransformation();
 }
 
@@ -208,7 +201,6 @@ void MyWindow::on_scalingYSlider_valueChanged(int value)
 {
     double realValue = 1000.0 / value;
     scalingMatrix.set(1, 1, realValue);
-    scaling.setY(value);
     updateTransformation();
 }
 
@@ -219,15 +211,15 @@ void MyWindow::on_scalingTogetherBox_toggled(bool checked)
 
 void MyWindow::on_rotationSlider_valueChanged(int value)
 {
-    rotation = value;
+    //
 }
 
 void MyWindow::on_shearingXSlider_valueChanged(int value)
 {
-    shearing.setX(value);
+    //
 }
 
 void MyWindow::on_shearingYSlider_valueChanged(int value)
 {
-    shearing.setY(value);
+    //
 }
