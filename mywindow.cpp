@@ -16,7 +16,8 @@ MyWindow::MyWindow(QWidget *parent) :
     scaling(0, 0),
     scaleTogether(false),
     rotation(0),
-    shearing(0, 0)
+    shearing(0, 0),
+    sourceImage(":res/logo_umk_300x300.png")
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -34,6 +35,7 @@ MyWindow::MyWindow(QWidget *parent) :
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
 
+    updateTransformation();
 }
 
 // Definition of destructor
@@ -68,7 +70,6 @@ void MyWindow::paintEvent(QPaintEvent*)
     // (img_x0, img_y0) specifies the top-left point in the paint device that is to be drawn onto.
     p.drawImage(img_x0,img_y0,*img);
 }
-
 
 // Function (slot) called when the user clicks button "Clean" (cleanButton)
 void MyWindow::on_cleanButton_clicked()
@@ -116,6 +117,42 @@ void MyWindow::img_clean()
             ptr[img_width*4*i + 4*j + 2] = 255; // RED component
         }
     }
+}
+
+int MyWindow::bitsCoordFromXy(int x, int y)
+{
+    return 4 * (img_width * y + x);
+}
+
+int MyWindow::bitsCoordFromXy(int x, int y, int width)
+{
+    return 4 * (width * y + x);
+}
+
+void MyWindow::updateTransformation()
+{
+    img_clean();
+
+    uchar* imgBits = img->bits();
+    uchar* sourceBits = sourceImage.bits();
+
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            if (    x > 150 and x < 150 + 300
+                and y > 150 and y < 150 + 300)
+            {
+                int sourceCoords = bitsCoordFromXy(x - 150, y - 150, 300);
+                int imgCoords = bitsCoordFromXy(x, y);
+                imgBits[imgCoords + 2] = sourceBits[sourceCoords + 2];
+                imgBits[imgCoords + 1] = sourceBits[sourceCoords + 1];
+                imgBits[imgCoords    ] = sourceBits[sourceCoords    ];
+            }
+        }
+    }
+
+    update();
 }
 
 // Function (slot) called when the user press mouse button

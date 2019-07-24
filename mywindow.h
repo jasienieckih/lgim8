@@ -79,7 +79,12 @@ private:
     bool scaleTogether;
     int rotation;
     Point shearing;
+    QImage sourceImage;
 
+    // task-specific functions
+    void updateTransformation();
+    int bitsCoordFromXy(int x, int y);
+    int bitsCoordFromXy(int x, int y, int width);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
