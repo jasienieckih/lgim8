@@ -132,18 +132,20 @@ void MyWindow::updateTransformation()
     uchar* imgBits = img->bits();
     uchar* sourceBits = sourceImage.bits();
 
-    Matrix prescalingMatrix;
-    prescalingMatrix.set(0, 2, 300);
-    prescalingMatrix.set(1, 2, 300);
-    Matrix postscalingMatrix;
-    postscalingMatrix.set(0, 2, -300);
-    postscalingMatrix.set(1, 2, -300);
+    Matrix preCoordinateTransformMatrix;
+    preCoordinateTransformMatrix.set(0, 2, 300);
+    preCoordinateTransformMatrix.set(1, 2, 300);
+    Matrix postCoordinateTransformMatrix;
+    postCoordinateTransformMatrix.set(0, 2, -300);
+    postCoordinateTransformMatrix.set(1, 2, -300);
 
     Matrix transformationMatrix = translationMatrix;
-    transformationMatrix = transformationMatrix * prescalingMatrix * scalingMatrix * postscalingMatrix;
-    transformationMatrix = transformationMatrix * prescalingMatrix * rotationMatrix * postscalingMatrix;
-    transformationMatrix = transformationMatrix * prescalingMatrix * xShearingMatrix * postscalingMatrix;
-    transformationMatrix = transformationMatrix * prescalingMatrix * yShearingMatrix * postscalingMatrix;
+    transformationMatrix = transformationMatrix * preCoordinateTransformMatrix;
+    transformationMatrix = transformationMatrix * scalingMatrix;
+    transformationMatrix = transformationMatrix * rotationMatrix;
+    transformationMatrix = transformationMatrix * xShearingMatrix;
+    transformationMatrix = transformationMatrix * yShearingMatrix;
+    transformationMatrix = transformationMatrix * postCoordinateTransformMatrix;
 
     for (int x = 0; x < img_width; ++x)
     {
