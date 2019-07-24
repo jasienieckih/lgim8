@@ -27,6 +27,7 @@
 #include <QMouseEvent>
 
 #include "point.h"
+#include "matrix.h"
 
 namespace Ui {
     class MyWindow;
@@ -80,6 +81,7 @@ private:
     int rotation;
     Point shearing;
     QImage sourceImage;
+    Matrix translationMatrix;
 
     // task-specific functions
     void updateTransformation();

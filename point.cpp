@@ -16,11 +16,12 @@ Point::Point(int x, int y)
       value_y(y)
 {}
 
-int Point::x()
+double Point::x() const
 {
     return int(round(value_x));
 }
-int Point::y()
+
+double Point::y() const
 {
     return int(round(value_y));
 }
@@ -39,6 +40,12 @@ void Point::setX(int x)
 void Point::setY(int y)
 {
     value_y = y;
+}
+
+Point Point::getRounded() const
+{
+    Point ret = Point(round(value_x), round(value_y));
+    return ret;
 }
 
 Point Point::operator+(Point other)

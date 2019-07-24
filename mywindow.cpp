@@ -140,10 +140,13 @@ void MyWindow::updateTransformation()
     {
         for (int y = 0; y < img_height; ++y)
         {
-            if (    x > 150 and x < 150 + 300
-                and y > 150 and y < 150 + 300)
+            Point p = Point(x, y);
+            Point t = translationMatrix * p;
+            t = t.getRounded();
+            if (    t.x() > 150 and t.x() < 150 + 300
+                and t.y() > 150 and t.y() < 150 + 300)
             {
-                int sourceCoords = bitsCoordFromXy(x - 150, y - 150, 300);
+                int sourceCoords = bitsCoordFromXy(t.x() - 150, t.y() - 150, 300);
                 int imgCoords = bitsCoordFromXy(x, y);
                 imgBits[imgCoords + 2] = sourceBits[sourceCoords + 2];
                 imgBits[imgCoords + 1] = sourceBits[sourceCoords + 1];
@@ -167,12 +170,20 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
 void MyWindow::on_translationXSlider_valueChanged(int value)
 {
+    value = value - 1000;
+    value *= 0.5;
+    translationMatrix.set(0, 2, -value);
     translation.setX(value);
+    updateTransformation();
 }
 
 void MyWindow::on_translationYSlider_valueChanged(int value)
 {
+    value = value - 1000;
+    value *= 0.5;
+    translationMatrix.set(1, 2, -value);
     translation.setY(value);
+    updateTransformation();
 }
 
 void MyWindow::on_scalingXSlider_valueChanged(int value)

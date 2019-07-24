@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mywindow.cpp \
-    point.cpp
+    point.cpp \
+    matrix.cpp
 
 HEADERS  += mywindow.h \
-    point.h
+    point.h \
+    matrix.h
 
 FORMS    += mywindow.ui
 
