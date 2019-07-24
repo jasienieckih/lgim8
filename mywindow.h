@@ -80,6 +80,8 @@ private:
     Matrix translationMatrix;
     Matrix scalingMatrix;
     Matrix rotationMatrix;
+    Matrix xShearingMatrix;
+    Matrix yShearingMatrix;
 
     // task-specific functions
     void updateTransformation();

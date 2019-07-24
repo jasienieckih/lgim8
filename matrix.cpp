@@ -50,7 +50,7 @@ Point Matrix::operator*(const Point point) const
     return ret;
 }
 
-double Matrix::set(int x, int y, double value)
+void Matrix::set(int x, int y, double value)
 {
     values[x][y] = value;
 }

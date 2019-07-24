@@ -142,6 +142,8 @@ void MyWindow::updateTransformation()
     Matrix transformationMatrix = translationMatrix;
     transformationMatrix = transformationMatrix * prescalingMatrix * scalingMatrix * postscalingMatrix;
     transformationMatrix = transformationMatrix * prescalingMatrix * rotationMatrix * postscalingMatrix;
+    transformationMatrix = transformationMatrix * prescalingMatrix * xShearingMatrix * postscalingMatrix;
+    transformationMatrix = transformationMatrix * prescalingMatrix * yShearingMatrix * postscalingMatrix;
 
     for (int x = 0; x < img_width; ++x)
     {
@@ -223,10 +225,16 @@ void MyWindow::on_rotationSlider_valueChanged(int value)
 
 void MyWindow::on_shearingXSlider_valueChanged(int value)
 {
-    //
+    value = value - 1000;
+    double realValue = value * 0.002;
+    xShearingMatrix.set(0, 1, realValue);
+    updateTransformation();
 }
 
 void MyWindow::on_shearingYSlider_valueChanged(int value)
 {
-    //
+    value = value - 1000;
+    double realValue = value * 0.002;
+    xShearingMatrix.set(1, 0, realValue);
+    updateTransformation();
 }
