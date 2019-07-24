@@ -31,6 +31,16 @@ void Point::set(int x, int y)
     value_y = y;
 }
 
+void Point::setX(int x)
+{
+    value_x = x;
+}
+
+void Point::setY(int y)
+{
+    value_y = y;
+}
+
 Point Point::operator+(Point other)
 {
     return Point(value_x + other.value_x, value_y + other.value_y);

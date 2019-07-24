@@ -130,22 +130,22 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
 void MyWindow::on_translationXSlider_valueChanged(int value)
 {
-    translation.set(value, translation.y());
+    translation.setX(value);
 }
 
 void MyWindow::on_translationYSlider_valueChanged(int value)
 {
-    translation.set(translation.x(), value);
+    translation.setY(value);
 }
 
 void MyWindow::on_scalingXSlider_valueChanged(int value)
 {
-    scaling.set(value, scaling.y());
+    scaling.setX(value);
 }
 
 void MyWindow::on_scalingYSlider_valueChanged(int value)
 {
-    scaling.set(scaling.x(), value);
+    scaling.setY(value);
 }
 
 void MyWindow::on_scalingTogetherBox_toggled(bool checked)
@@ -160,10 +160,10 @@ void MyWindow::on_rotationSlider_valueChanged(int value)
 
 void MyWindow::on_shearingXSlider_valueChanged(int value)
 {
-    shearing.set(value, shearing.y());
+    shearing.setX(value);
 }
 
 void MyWindow::on_shearingYSlider_valueChanged(int value)
 {
-    shearing.set(shearing.x(), value);
+    shearing.setY(value);
 }

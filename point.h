@@ -14,6 +14,8 @@ public:
     int x();
     int y();
     void set(int x, int y);
+    void setX(int x);
+    void setY(int y);
 
     Point operator+(Point other);
     Point operator*(double coefficient);
