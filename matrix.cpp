@@ -11,6 +11,19 @@ Matrix::Matrix()
     }
 }
 
+Matrix Matrix::operator*(const double factor) const
+{
+    Matrix ret;
+    for (int i = 0; i < 2 /* sic! */; ++i)
+    {
+        for (int j = 0; j < 2 /* sic! */; ++j)
+        {
+            ret.values[i][j] *= values[i][j] * factor;
+        }
+    }
+    return ret;
+}
+
 Matrix Matrix::operator*(const Matrix other) const
 {
     Matrix ret;

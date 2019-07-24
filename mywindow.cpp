@@ -141,6 +141,7 @@ void MyWindow::updateTransformation()
 
     Matrix transformationMatrix = translationMatrix;
     transformationMatrix = transformationMatrix * prescalingMatrix * scalingMatrix * postscalingMatrix;
+    transformationMatrix = transformationMatrix * prescalingMatrix * rotationMatrix * postscalingMatrix;
 
     for (int x = 0; x < img_width; ++x)
     {
@@ -211,7 +212,14 @@ void MyWindow::on_scalingTogetherBox_toggled(bool checked)
 
 void MyWindow::on_rotationSlider_valueChanged(int value)
 {
-    //
+    const double factor = 2.0 / 1000.0 * M_PI;
+    double angle = value * factor;
+    rotationMatrix.set(0, 0, cos(angle));
+    rotationMatrix.set(0, 1, -sin(angle));
+    rotationMatrix.set(1, 0, sin(angle));
+    rotationMatrix.set(1, 1, -cos(angle));
+    rotationMatrix = rotationMatrix * (1.0 / cos(2 * angle));
+    updateTransformation();
 }
 
 void MyWindow::on_shearingXSlider_valueChanged(int value)
