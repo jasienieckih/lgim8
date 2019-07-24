@@ -197,6 +197,10 @@ void MyWindow::on_translationYSlider_valueChanged(int value)
 
 void MyWindow::on_scalingXSlider_valueChanged(int value)
 {
+    if (scaleTogether)
+    {
+        ui->scalingYSlider->setValue(value);
+    }
     double realValue = 1000.0 / value;
     scalingMatrix.set(0, 0, realValue);
     updateTransformation();
@@ -204,6 +208,10 @@ void MyWindow::on_scalingXSlider_valueChanged(int value)
 
 void MyWindow::on_scalingYSlider_valueChanged(int value)
 {
+    if (scaleTogether)
+    {
+        ui->scalingXSlider->setValue(value);
+    }
     double realValue = 1000.0 / value;
     scalingMatrix.set(1, 1, realValue);
     updateTransformation();
