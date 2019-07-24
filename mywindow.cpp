@@ -238,3 +238,14 @@ void MyWindow::on_shearingYSlider_valueChanged(int value)
     xShearingMatrix.set(1, 0, realValue);
     updateTransformation();
 }
+
+void MyWindow::on_resetButton_clicked()
+{
+    ui->translationXSlider->setValue(1000);
+    ui->translationYSlider->setValue(1000);
+    ui->scalingXSlider->setValue(1000);
+    ui->scalingYSlider->setValue(1000);
+    ui->rotationSlider->setValue(0);
+    ui->shearingXSlider->setValue(1000);
+    ui->shearingYSlider->setValue(1000);
+}
