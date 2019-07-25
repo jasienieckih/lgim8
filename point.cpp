@@ -10,34 +10,28 @@ Point::Point(double x, double y)
       value_y(y)
 {}
 
-Point::Point(int x, int y)
-    :
-      value_x(x),
-      value_y(y)
-{}
-
 double Point::x() const
 {
-    return int(round(value_x));
+    return value_x;
 }
 
 double Point::y() const
 {
-    return int(round(value_y));
+    return value_y;
 }
 
-void Point::set(int x, int y)
+void Point::set(double x, double y)
 {
     value_x = x;
     value_y = y;
 }
 
-void Point::setX(int x)
+void Point::setX(double x)
 {
     value_x = x;
 }
 
-void Point::setY(int y)
+void Point::setY(double y)
 {
     value_y = y;
 }

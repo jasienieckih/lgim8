@@ -18,7 +18,7 @@ Matrix Matrix::operator*(const double factor) const
     {
         for (int j = 0; j < 2 /* sic! */; ++j)
         {
-            ret.values[i][j] *= values[i][j] * factor;
+            ret.values[i][j] = values[i][j] * factor;
         }
     }
     return ret;

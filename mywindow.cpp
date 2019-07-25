@@ -153,15 +153,37 @@ void MyWindow::updateTransformation()
         {
             Point p = Point(x, y);
             Point t = transformationMatrix * p;
-            t = t.getRounded();
-            if (    t.x() > 150 and t.x() < 150 + 300
-                and t.y() > 150 and t.y() < 150 + 300)
+            if (    t.x() > 150.0 and t.x() < 150.0 + 300 - 1
+                and t.y() > 150.0 and t.y() < 150.0 + 300 - 1)
             {
-                int sourceCoords = bitsCoordFromXy(t.x() - 150, t.y() - 150, 300);
                 int imgCoords = bitsCoordFromXy(x, y);
-                imgBits[imgCoords + 2] = sourceBits[sourceCoords + 2];
-                imgBits[imgCoords + 1] = sourceBits[sourceCoords + 1];
-                imgBits[imgCoords    ] = sourceBits[sourceCoords    ];
+                int floorX = floor(t.x()) - 150;
+                int floorY = floor(t.y()) - 150;
+                int bitsCoords[2][2];
+                bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY,     300);
+                bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY,     300);
+                bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, 300);
+                bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, 300);
+                for (int component = 0; component < 3; ++component)
+                {
+                    double neighbours[2][2];
+                    for (int i = 0; i < 2; ++i)
+                    {
+                        for (int j = 0; j < 2; ++j)
+                        {
+                            neighbours[i][j] = sourceBits[bitsCoords[i][j] + component];
+                        }
+                    }
+                    double interpolated[2];
+                    double factor = t.x() - floor(t.x());
+                    for (int i = 0; i < 2; ++i)
+                    {
+                        interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                    }
+                    factor = t.y() - floor(t.y());
+                    double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+                    imgBits[imgCoords + component] = round(finalInterpolated);
+                }
             }
         }
     }

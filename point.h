@@ -10,12 +10,11 @@ class Point
 public:
     Point();
     Point(double x, double y);
-    Point(int x, int y);
     double x() const;
     double y() const;
-    void set(int x, int y);
-    void setX(int x);
-    void setY(int y);
+    void set(double x, double y);
+    void setX(double x);
+    void setY(double y);
     Point getRounded() const;
     Point operator+(Point other);
     Point operator*(double coefficient);
