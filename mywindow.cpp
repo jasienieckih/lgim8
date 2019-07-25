@@ -248,10 +248,12 @@ void MyWindow::on_rotationSlider_valueChanged(int value)
 {
     const double factor = 2.0 / 1000.0 * M_PI;
     double angle = value * factor;
-    rotationMatrix.set(0, 0, cos(angle));
-    rotationMatrix.set(0, 1, sin(angle));
-    rotationMatrix.set(1, 0, -sin(angle));
-    rotationMatrix.set(1, 1, cos(angle));
+    double sine = sin(angle);
+    double cosine = cos(angle);
+    rotationMatrix.set(0, 0, cosine);
+    rotationMatrix.set(0, 1, sine);
+    rotationMatrix.set(1, 0, -sine);
+    rotationMatrix.set(1, 1, cosine);
     updateTransformation();
 }
 
