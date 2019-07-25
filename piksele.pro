@@ -13,9 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mywindow.cpp
+        mywindow.cpp \
+    point.cpp \
+    triangle.cpp
 
-HEADERS  += mywindow.h
+HEADERS  += mywindow.h \
+    point.h \
+    triangle.h
 
 FORMS    += mywindow.ui
 

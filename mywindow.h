@@ -26,6 +26,8 @@
 // or released inside a widget, or when the mouse cursor is moved.
 #include <QMouseEvent>
 
+#include "triangle.h"
+
 namespace Ui {
     class MyWindow;
 }
@@ -71,6 +73,16 @@ private:
     void img_draw1();
     void img_draw2();
 
+    // task-specific fields
+    Triangle inputTriangle;
+    Triangle outputTriangle;
+    QImage outputImage;
+
+    // task-specific functions
+    void updateTexturing();
+    int bitsCoordFromXy(int x, int y);
+    int bitsCoordFromXy(int x, int y, int width);
+    bool areCoordsValid(int x, int y);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
