@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
+    <width>1344</width>
     <height>682</height>
    </rect>
   </property>
@@ -33,10 +33,10 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>10</y>
-      <width>241</width>
-      <height>191</height>
+      <x>620</x>
+      <y>550</y>
+      <width>101</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="title">
@@ -45,8 +45,8 @@
     <widget class="QPushButton" name="draw1Button">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>20</y>
+       <x>130</x>
+       <y>40</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -58,8 +58,8 @@
     <widget class="QPushButton" name="draw2Button">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>60</y>
+       <x>130</x>
+       <y>80</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -71,8 +71,8 @@
     <widget class="QPushButton" name="cleanButton">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>100</y>
+       <x>130</x>
+       <y>110</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -84,8 +84,8 @@
     <widget class="QPushButton" name="exitButton">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>140</y>
+       <x>10</x>
+       <y>30</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -95,24 +95,32 @@
      </property>
     </widget>
    </widget>
+   <widget class="QFrame" name="drawFrame_2">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>10</y>
+      <width>600</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>883</width>
-     <height>21</height>
+     <width>1344</width>
+     <height>22</height>
     </rect>
    </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
