@@ -18,6 +18,7 @@ public:
     void setY(double y);
     Point getRounded() const;
     Point getAbsolute() const;
+    Point getFloor() const;
     Point operator+(Point other);
     Point operator-(Point other);
     Point operator*(double coefficient);

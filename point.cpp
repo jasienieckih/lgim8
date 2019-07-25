@@ -55,6 +55,12 @@ Point Point::getAbsolute() const
     return ret;
 }
 
+Point Point::getFloor() const
+{
+    Point ret = Point(floor(value_x), floor(value_y));
+    return ret;
+}
+
 Point Point::operator+(Point other)
 {
     return Point(value_x + other.value_x, value_y + other.value_y);

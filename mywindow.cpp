@@ -179,6 +179,7 @@ void MyWindow::updateOutputImage()
     {
         for (int y = 0; y < img_height; ++y)
         {
+            // calculating input coordinates to source from through barycentrics
             double coeffs[3][2];
             for (int i = 0; i < 2; ++i)
             {
@@ -194,18 +195,37 @@ void MyWindow::updateOutputImage()
             if (not hidingMode or not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
             {
                 Point inputCoords = ia * u + ib * v + ic * w;
-
-                // TODO: add interpolation instead of rounding
-                inputCoords = inputCoords.getRounded();
-
-                int inputBitsCoords = bitsCoordFromXy(inputCoords.x(), inputCoords.y());
-                int outputBitsCoords = bitsCoordFromXy(x, y);
+                int floorX = floor(inputCoords.x());
+                int floorY = floor(inputCoords.y());
+                int bitsCoords[2][2];
+                bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    );
+                bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    );
+                bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1);
+                bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1);
                 if (        areCoordsValid(inputCoords.x(), inputCoords.y())
                         and areCoordsValid(x,               y              ))
                 {
+                    // bilinear interpolation of color
+                    int outputBitsCoords = bitsCoordFromXy(x, y);
                     for (int component = 0; component < 3; ++component)
                     {
-                        outputBits[outputBitsCoords + component] = inputBits[inputBitsCoords + component];
+                        double neighbours[2][2];
+                        for (int i = 0; i < 2; ++i)
+                        {
+                            for (int j = 0; j < 2; ++j)
+                            {
+                                neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
+                            }
+                        }
+                        double interpolated[2];
+                        double factor = inputCoords.x() - floor(inputCoords.x());
+                        for (int i = 0; i < 2; ++i)
+                        {
+                            interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                        }
+                        factor = inputCoords.y() - floor(inputCoords.y());
+                        double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+                        outputBits[outputBitsCoords + component] = round(finalInterpolated);
                     }
                 }
             }
