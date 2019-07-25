@@ -191,19 +191,22 @@ void MyWindow::updateOutputImage()
             double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
             double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
             double u = 1 - v - w;
-            Point inputCoords = ia * u + ib * v + ic * w;
-
-            // TODO: add interpolation instead of rounding
-            inputCoords = inputCoords.getRounded();
-
-            int inputBitsCoords = bitsCoordFromXy(inputCoords.x(), inputCoords.y());
-            int outputBitsCoords = bitsCoordFromXy(x, y);
-            if (        areCoordsValid(inputCoords.x(), inputCoords.y())
-                    and areCoordsValid(x,               y              ))
+            if (not hidingMode or not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
             {
-                for (int component = 0; component < 3; ++component)
+                Point inputCoords = ia * u + ib * v + ic * w;
+
+                // TODO: add interpolation instead of rounding
+                inputCoords = inputCoords.getRounded();
+
+                int inputBitsCoords = bitsCoordFromXy(inputCoords.x(), inputCoords.y());
+                int outputBitsCoords = bitsCoordFromXy(x, y);
+                if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                        and areCoordsValid(x,               y              ))
                 {
-                    outputBits[outputBitsCoords + component] = inputBits[inputBitsCoords + component];
+                    for (int component = 0; component < 3; ++component)
+                    {
+                        outputBits[outputBitsCoords + component] = inputBits[inputBitsCoords + component];
+                    }
                 }
             }
         }
@@ -422,4 +425,10 @@ void MyWindow::mouseReleaseEvent(QMouseEvent *event)
         ((whichTriangleDragged == 0) ? inputTriangle : outputTriangle).setPoint(whichPointDragged, Point(x, y));
         updateTexturing();
     }
+}
+
+void MyWindow::on_hideCheckBox_toggled(bool checked)
+{
+    hidingMode = checked;
+    updateTexturing();
 }

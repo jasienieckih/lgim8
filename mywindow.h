@@ -84,7 +84,7 @@ private:
     int whichTriangleDragged;
     int whichPointDragged;
     bool isDragging;
-
+    bool hidingMode;
 
     // task-specific functions
     void updateTexturing();
@@ -108,6 +108,7 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
+    void on_hideCheckBox_toggled(bool checked);
 };
 
 #endif // MYWINDOW_H
