@@ -141,10 +141,111 @@ int MyWindow::bitsCoordFromXy(int x, int y, int width)
     return 4 * (width * y + x);
 }
 
-void MyWindow::updateTexturing()
+void MyWindow::drawLine(QImage& image, Point p0, Point p1)
 {
-    img_clean();
+    drawLine(image, p0.x(), p0.y(), p1.x(), p1.y());
+}
 
+void MyWindow::drawLine(QImage& image, int x0, int y0, int x1, int y1)
+{
+    const uchar color[3] = {0x80, 0x80, 0x80};
+
+    uchar *ptr;
+    ptr = image.bits();
+
+    int x;
+    int y;
+    int pixel;
+
+    int dx = abs(x0 - x1);
+    int dy = abs(y0 - y1);
+
+    if (dx > dy)
+    {
+        if (x0 == x1)
+        {
+            for (y = y0; y <= y1; ++y)
+            {
+                x = x0;
+                pixel = img_width * 4 * y + 4 * x;
+                for (int component = 0; component < 3; ++component)
+                {
+                    ptr[pixel + component] = color[component];
+                }
+            }
+        }
+        else
+        {
+            if (x0 > x1)
+            {
+                std::swap(x0, x1);
+                std::swap(y0, y1);
+            }
+            double a = double(y1 - y0)/double(x1 - x0);
+            double b = y0 - a * x0;
+
+            for (x = x0; x <= x1; ++x)
+            {
+                y = int(round(a * x + b));
+                pixel = img_width * 4 * y + 4 * x;
+                for (int component = 0; component < 3; ++component)
+                {
+                    ptr[pixel + component] = color[component];
+                }
+            }
+        }
+    }
+    else
+    {
+        if (y0 == y1)
+        {
+            for (x = x0; x <= x1; ++x)
+            {
+                y = y0;
+                pixel = img_width * 4 * x + 4 * y;
+                for (int component = 0; component < 3; ++component)
+                {
+                    ptr[pixel + component] = color[component];
+                }
+            }
+        }
+        else
+        {
+            if (y0 > y1)
+            {
+                std::swap(x0, x1);
+                std::swap(y0, y1);
+            }
+            double a = double(x1 - x0)/double(y1 - y0);
+            double b = x0 - a * y0;
+
+            for (y = y0; y <= y1; ++y)
+            {
+                x = int(round(a * y + b));
+                pixel = img_width * 4 * y + 4 * x;
+                for (int component = 0; component < 3; ++component)
+                {
+                    ptr[pixel + component] = color[component];
+                }
+            }
+        }
+    }
+}
+
+void MyWindow::drawTriangles()
+{
+    for (int i = 0; i < 2; ++i)
+    {
+        QImage& image = (i == 0) ? *img : outputImage;
+        Triangle& triangle = (i == 0) ? inputTriangle : outputTriangle;
+        drawLine(image, triangle.point(0), triangle.point(1));
+        drawLine(image, triangle.point(1), triangle.point(2));
+        drawLine(image, triangle.point(2), triangle.point(0));
+    }
+}
+
+void MyWindow::drawTriangleHandles()
+{
     const int HANDLE_RADIUS = 3;
     const uchar HANDLE_COLORS[2][3][3] = {{{0xe0, 0x10, 0x10},
                                            {0x10, 0xc8, 0x10},
@@ -184,6 +285,14 @@ void MyWindow::updateTexturing()
             }
         }
     }
+}
+
+void MyWindow::updateTexturing()
+{
+    img_clean();
+
+    drawTriangles();
+    drawTriangleHandles();
 
     update();
 }

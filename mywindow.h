@@ -83,6 +83,10 @@ private:
     int bitsCoordFromXy(int x, int y);
     int bitsCoordFromXy(int x, int y, int width);
     bool areCoordsValid(int x, int y);
+    void drawTriangleHandles();
+    void drawTriangles();
+    void drawLine(QImage& image, int x0, int y0, int x1, int y1);
+    void drawLine(QImage& image, Point p0, Point p1);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
