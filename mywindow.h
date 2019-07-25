@@ -78,11 +78,13 @@ private:
     Triangle inputTriangle;
     Triangle outputTriangle;
     QImage outputImage;
+    QImage sourceImage;
     int outputImage_x0;
     int outputImage_y0;
     int whichTriangleDragged;
     int whichPointDragged;
     bool isDragging;
+
 
     // task-specific functions
     void updateTexturing();
@@ -93,6 +95,7 @@ private:
     void drawTriangles();
     void drawLine(QImage& image, int x0, int y0, int x1, int y1);
     void drawLine(QImage& image, Point p0, Point p1);
+    void drawOriginalImage();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,

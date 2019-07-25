@@ -13,6 +13,7 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     outputImage(600, 600, QImage::Format::Format_RGB32),
+    sourceImage(":res/keskesej4_600x600.jpg"),
     outputImage_x0(730),
     outputImage_y0(10),
     isDragging(false)
@@ -142,6 +143,23 @@ int MyWindow::bitsCoordFromXy(int x, int y)
 int MyWindow::bitsCoordFromXy(int x, int y, int width)
 {
     return 4 * (width * y + x);
+}
+
+void MyWindow::drawOriginalImage()
+{
+    uchar *bits = img->bits();
+    uchar *sourceBits = sourceImage.bits();
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            int coords = bitsCoordFromXy(x, y);
+            for (int component = 0; component < 3; ++component)
+            {
+                bits[coords + component] = sourceBits[coords + component];
+            }
+        }
+    }
 }
 
 void MyWindow::drawLine(QImage& image, Point p0, Point p1)
@@ -293,6 +311,7 @@ void MyWindow::updateTexturing()
 {
     img_clean();
 
+    drawOriginalImage();
     drawTriangles();
     drawTriangleHandles();
 
