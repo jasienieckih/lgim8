@@ -162,6 +162,54 @@ void MyWindow::drawOriginalImage()
     }
 }
 
+void MyWindow::updateOutputImage()
+{
+    Point oa = outputTriangle.point(0);
+    Point ob = outputTriangle.point(1);
+    Point oc = outputTriangle.point(2);
+
+    Point ia = inputTriangle.point(0);
+    Point ib = inputTriangle.point(1);
+    Point ic = inputTriangle.point(2);
+
+    uchar* inputBits = sourceImage.bits();
+    uchar* outputBits = outputImage.bits();
+
+    for (int x = 0; x < img_width; ++x)
+    {
+        for (int y = 0; y < img_height; ++y)
+        {
+            double coeffs[3][2];
+            for (int i = 0; i < 2; ++i)
+            {
+                double ai = oa.coord(i);
+                coeffs[0][i] = (i == 0 ? x : y) - ai;
+                coeffs[1][i] = oc.coord(i) - ai;
+                coeffs[2][i] = ob.coord(i) - ai;
+            }
+            double denominator = coeffs[2][0] * coeffs[1][1] - coeffs[1][0] * coeffs[2][1];
+            double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
+            double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
+            double u = 1 - v - w;
+            Point inputCoords = ia * u + ib * v + ic * w;
+
+            // TODO: add interpolation instead of rounding
+            inputCoords = inputCoords.getRounded();
+
+            int inputBitsCoords = bitsCoordFromXy(inputCoords.x(), inputCoords.y());
+            int outputBitsCoords = bitsCoordFromXy(x, y);
+            if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                    and areCoordsValid(x,               y              ))
+            {
+                for (int component = 0; component < 3; ++component)
+                {
+                    outputBits[outputBitsCoords + component] = inputBits[inputBitsCoords + component];
+                }
+            }
+        }
+    }
+}
+
 void MyWindow::drawLine(QImage& image, Point p0, Point p1)
 {
     drawLine(image, p0.x(), p0.y(), p1.x(), p1.y());
@@ -312,6 +360,7 @@ void MyWindow::updateTexturing()
     img_clean();
 
     drawOriginalImage();
+    updateOutputImage();
     drawTriangles();
     drawTriangleHandles();
 

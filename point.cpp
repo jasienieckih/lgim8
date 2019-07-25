@@ -21,6 +21,12 @@ double Point::y() const
     return value_y;
 }
 
+double Point::coord(int index) const
+{
+    if (index == 0) return value_x;
+    return value_y;
+}
+
 void Point::set(double x, double y)
 {
     value_x = x;
