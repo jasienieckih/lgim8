@@ -16,7 +16,9 @@ public:
     void setX(double x);
     void setY(double y);
     Point getRounded() const;
+    Point getAbsolute() const;
     Point operator+(Point other);
+    Point operator-(Point other);
     Point operator*(double coefficient);
 private:
     double value_x, value_y;

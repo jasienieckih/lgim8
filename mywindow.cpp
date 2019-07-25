@@ -12,7 +12,10 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    outputImage(600, 600, QImage::Format::Format_RGB32)
+    outputImage(600, 600, QImage::Format::Format_RGB32),
+    outputImage_x0(730),
+    outputImage_y0(10),
+    isDragging(false)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -71,7 +74,7 @@ void MyWindow::paintEvent(QPaintEvent*)
     // Draws an image 'img' by copying it into the paint device.
     // (img_x0, img_y0) specifies the top-left point in the paint device that is to be drawn onto.
     p.drawImage(img_x0,img_y0,*img);
-    p.drawImage(730, 10, outputImage);
+    p.drawImage(outputImage_x0, outputImage_y0, outputImage);
 }
 
 
@@ -246,7 +249,6 @@ void MyWindow::drawTriangles()
 
 void MyWindow::drawTriangleHandles()
 {
-    const int HANDLE_RADIUS = 3;
     const uchar HANDLE_COLORS[2][3][3] = {{{0xe0, 0x10, 0x10},
                                            {0x10, 0xc8, 0x10},
                                            {0x10, 0x10, 0xe0}},
@@ -302,6 +304,54 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
     int x = event->x();
     int y = event->y();
 
-    x -= img_x0;
-    y -= img_y0;
+    int image_index = (x < 672) ? 0 : 1;
+    if (image_index == 0)
+    {
+        x -= img_x0;
+        y -= img_y0;
+    }
+    else
+    {
+        x -= outputImage_x0;
+        y -= outputImage_y0;
+    }
+
+    Triangle &triangle = (image_index == 0) ? inputTriangle : outputTriangle;
+    for (int point = 0; point < 3; ++point)
+    {
+        Point delta = triangle.point(point) - Point(x, y);
+        delta = delta.getAbsolute();
+        if (delta.x() < HANDLE_RADIUS and delta.y() < HANDLE_RADIUS)
+        {
+            whichTriangleDragged = image_index;
+            whichPointDragged = point;
+            isDragging = true;
+            break;
+        }
+    }
+}
+
+void MyWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    int x = event->x();
+    int y = event->y();
+
+    int image_index = (x < 672) ? 0 : 1;
+    if (image_index == 0)
+    {
+        x -= img_x0;
+        y -= img_y0;
+    }
+    else
+    {
+        x -= outputImage_x0;
+        y -= outputImage_y0;
+    }
+
+    if (isDragging)
+    {
+        isDragging = false;
+        ((whichTriangleDragged == 0) ? inputTriangle : outputTriangle).setPoint(whichPointDragged, Point(x, y));
+        updateTexturing();
+    }
 }

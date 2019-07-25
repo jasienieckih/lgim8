@@ -74,9 +74,15 @@ private:
     void img_draw2();
 
     // task-specific fields
+    const int HANDLE_RADIUS = 4;
     Triangle inputTriangle;
     Triangle outputTriangle;
     QImage outputImage;
+    int outputImage_x0;
+    int outputImage_y0;
+    int whichTriangleDragged;
+    int whichPointDragged;
+    bool isDragging;
 
     // task-specific functions
     void updateTexturing();
@@ -96,8 +102,8 @@ private slots:
     void on_cleanButton_clicked();
     void on_exitButton_clicked();
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
-
 };
 
 #endif // MYWINDOW_H

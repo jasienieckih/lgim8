@@ -1,6 +1,7 @@
 #include "point.h"
 
 #include <cmath>
+#include <ctgmath>
 
 Point::Point() {}
 
@@ -42,9 +43,20 @@ Point Point::getRounded() const
     return ret;
 }
 
+Point Point::getAbsolute() const
+{
+    Point ret = Point(abs(value_x), abs(value_y));
+    return ret;
+}
+
 Point Point::operator+(Point other)
 {
     return Point(value_x + other.value_x, value_y + other.value_y);
+}
+
+Point Point::operator-(Point other)
+{
+    return Point(value_x - other.value_x, value_y - other.value_y);
 }
 
 Point Point::operator*(double coefficient)
