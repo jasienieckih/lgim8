@@ -16,7 +16,8 @@ MyWindow::MyWindow(QWidget *parent) :
     sourceImage(":res/keskesej4_600x600.jpg"),
     outputImage_x0(730),
     outputImage_y0(10),
-    isDragging(false)
+    isDragging(false),
+    hidingMode(true)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
