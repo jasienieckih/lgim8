@@ -55,18 +55,11 @@ private:
     // Access to individual elements of the GUI is obtained by the variable "ui"
     Ui::MyWindow *ui;
 
-    // 'img' is a field storing the image
-    QImage *img;
-
     // width of the image
     int img_width;
 
     // height of the image
     int img_height;
-
-    // coordinates of the upper left corner of the image
-    int img_x0;
-    int img_y0;
 
     // Declarations of drawing functions
     void img_clean();
@@ -79,10 +72,9 @@ private:
     const int NUMBER_OF_POINTS = 4;
     Point points[2][4];
     TrianglePtr *triangles[2][2];
-    QImage outputImage;
-    QImage sourceImage;
-    int outputImage_x0;
-    int outputImage_y0;
+    QImage* images[2];
+    QImage* sourceImages[2];
+    Point zeroCoordinates[2];
     int whichPointDragged;
     bool isDragging;
     bool hidingMode;
@@ -96,7 +88,7 @@ private:
     void drawTriangles();
     void drawLine(QImage& image, int x0, int y0, int x1, int y1);
     void drawLine(QImage& image, Point p0, Point p1);
-    void drawOriginalImage();
+    void drawOriginalImages();
     void updateOutputImage();
     void updateOutputTriangle(int index);
 private slots:

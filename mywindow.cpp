@@ -12,10 +12,6 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    outputImage(600, 600, QImage::Format::Format_RGB32),
-    sourceImage(":res/keskesej4_600x600.jpg"),
-    outputImage_x0(730),
-    outputImage_y0(10),
     isDragging(false),
     hidingMode(true)
 {
@@ -28,15 +24,17 @@ MyWindow::MyWindow(QWidget *parent) :
     // the image will be displayed directly on the main application window.
     img_width = ui->drawFrame->width();
     img_height = ui->drawFrame->height();
-    img_x0 = ui->drawFrame->x();
-    img_y0 = ui->drawFrame->y();
+    zeroCoordinates[0].setX(ui->drawFrame->x());
+    zeroCoordinates[0].setY(ui->drawFrame->y());
+    zeroCoordinates[1].setX(ui->drawFrame_2->x());
+    zeroCoordinates[1].setY(ui->drawFrame_2->y());
 
-    // Create an object of QImage class of appropriate width
-    // and height. Set its format for 32-bit RGB (0xffRRGGBB).
-    img = new QImage(img_width,img_height,QImage::Format_RGB32);
+    sourceImages[0] = new QImage(":res/keskesej4_600x600.jpg");
+    sourceImages[1] = new QImage(":res/leopard_600x600.png");
 
     for (int i = 0; i < 2; ++i)
     {
+        images[i] = new QImage(img_width, img_height, QImage::Format::Format_RGB32);
         points[i][0] = Point(200, 100);
         points[i][1] = Point(100, 500);
         points[i][2] = Point(500, 400);
@@ -75,12 +73,11 @@ void MyWindow::paintEvent(QPaintEvent*)
     // The QPainter class performs low-level painting on widgets and other paint devices.
     QPainter p(this);
 
-    // Draws an image 'img' by copying it into the paint device.
-    // (img_x0, img_y0) specifies the top-left point in the paint device that is to be drawn onto.
-    p.drawImage(img_x0,img_y0,*img);
-    p.drawImage(outputImage_x0, outputImage_y0, outputImage);
+    for (int i = 0; i < 2; ++i)
+    {
+        p.drawImage(zeroCoordinates[i].x(), zeroCoordinates[i].y(), *images[i]);
+    }
 }
-
 
 // Function (slot) called when the user clicks button "Clean" (cleanButton)
 void MyWindow::on_cleanButton_clicked()
@@ -113,7 +110,7 @@ void MyWindow::img_clean()
         unsigned char *ptr;
 
         // 'bits()' returns a pointer to the first pixel of the image
-        ptr = (h == 0) ? img->bits() : outputImage.bits();
+        ptr = images[h]->bits();
 
         int i, j;
 
@@ -148,18 +145,21 @@ int MyWindow::bitsCoordFromXy(int x, int y, int width)
     return 4 * (width * y + x);
 }
 
-void MyWindow::drawOriginalImage()
+void MyWindow::drawOriginalImages()
 {
-    uchar *bits = img->bits();
-    uchar *sourceBits = sourceImage.bits();
-    for (int x = 0; x < img_width; ++x)
+    for (int i = 0; i < 2; ++i)
     {
-        for (int y = 0; y < img_height; ++y)
+        uchar *bits = images[i]->bits();
+        uchar *sourceBits = sourceImages[i]->bits();
+        for (int x = 0; x < img_width; ++x)
         {
-            int coords = bitsCoordFromXy(x, y);
-            for (int component = 0; component < 3; ++component)
+            for (int y = 0; y < img_height; ++y)
             {
-                bits[coords + component] = sourceBits[coords + component];
+                int coords = bitsCoordFromXy(x, y);
+                for (int component = 0; component < 3; ++component)
+                {
+                    bits[coords + component] = sourceBits[coords + component];
+                }
             }
         }
     }
@@ -167,6 +167,8 @@ void MyWindow::drawOriginalImage()
 
 void MyWindow::updateOutputTriangle(int index)
 {
+    index = index;
+    /*
     Point oa = triangles[1][index]->point(0);
     Point ob = triangles[1][index]->point(1);
     Point oc = triangles[1][index]->point(2);
@@ -234,6 +236,7 @@ void MyWindow::updateOutputTriangle(int index)
             }
         }
     }
+    */
 }
 
 void MyWindow::updateOutputImage()
@@ -341,7 +344,7 @@ void MyWindow::drawTriangles()
     {
         for (int t = 0; t < NUMBER_OF_TRIANGLES; ++t)
         {
-            QImage& image = (i == 0) ? *img : outputImage;
+            QImage& image = *images[i];
             TrianglePtr& triangle = *triangles[i][t];
             drawLine(image, triangle.point(0), triangle.point(1));
             drawLine(image, triangle.point(1), triangle.point(2));
@@ -360,11 +363,9 @@ void MyWindow::drawTriangleHandles()
                                            {0x10, 0xc8, 0x10}}};
 
     uchar* bits[2];
-    bits[0] = img->bits();
-    bits[1] = outputImage.bits();
-
     for (int image = 0; image < 2; ++image)
     {
+        bits[image] = images[image]->bits();
         for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
         {
             for (int point = 0; point < 3; ++point)
@@ -394,7 +395,7 @@ void MyWindow::updateTexturing()
 {
     img_clean();
 
-    drawOriginalImage();
+    drawOriginalImages();
     updateOutputImage();
     drawTriangles();
     drawTriangleHandles();
@@ -404,24 +405,14 @@ void MyWindow::updateTexturing()
 
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
-    int x = event->x();
-    int y = event->y();
+    Point click = Point(event->x(), event->y());
 
-    int image_index = (x < 672) ? 0 : 1;
-    if (image_index == 0)
-    {
-        x -= img_x0;
-        y -= img_y0;
-    }
-    else
-    {
-        x -= outputImage_x0;
-        y -= outputImage_y0;
-    }
+    int image_index = (click.x() < 672) ? 0 : 1;
+    click = click - zeroCoordinates[image_index];
 
     for (int point = 0; point < NUMBER_OF_POINTS; ++point)
     {
-        Point delta = points[image_index][point] - Point(x, y);
+        Point delta = points[image_index][point] - click;
         delta = delta.getAbsolute();
         if (delta.x() <= HANDLE_RADIUS and delta.y() <= HANDLE_RADIUS)
         {
@@ -434,25 +425,15 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
 void MyWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    int x = event->x();
-    int y = event->y();
+    Point click = Point(event->x(), event->y());
 
-    int image_index = (x < 672) ? 0 : 1;
-    if (image_index == 0)
-    {
-        x -= img_x0;
-        y -= img_y0;
-    }
-    else
-    {
-        x -= outputImage_x0;
-        y -= outputImage_y0;
-    }
+    int image_index = (click.x() < 672) ? 0 : 1;
+    click = click - zeroCoordinates[image_index];
 
     if (isDragging)
     {
         isDragging = false;
-        points[image_index][whichPointDragged].set(x, y);
+        points[image_index][whichPointDragged].set(click.x(), click.y());
         updateTexturing();
     }
 }
