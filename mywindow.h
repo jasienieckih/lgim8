@@ -26,7 +26,7 @@
 // or released inside a widget, or when the mouse cursor is moved.
 #include <QMouseEvent>
 
-#include "triangle.h"
+#include "triangleptr.h"
 
 namespace Ui {
     class MyWindow;
@@ -75,8 +75,9 @@ private:
 
     // task-specific fields
     const int HANDLE_RADIUS = 4;
-    Triangle inputTriangle;
-    Triangle outputTriangle;
+    Point points[2][4];
+    TrianglePtr inputTriangle;
+    TrianglePtr outputTriangle;
     QImage outputImage;
     QImage sourceImage;
     int outputImage_x0;

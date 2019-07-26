@@ -12,6 +12,8 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
+    inputTriangle(&points[0][0], &points[0][1], &points[0][2]),
+    outputTriangle(&points[1][0], &points[1][1], &points[1][2]),
     outputImage(600, 600, QImage::Format::Format_RGB32),
     sourceImage(":res/keskesej4_600x600.jpg"),
     outputImage_x0(730),
@@ -36,11 +38,11 @@ MyWindow::MyWindow(QWidget *parent) :
 
     for (int i = 0; i < 2; ++i)
     {
-        Triangle *t = (i == 0) ? &inputTriangle : &outputTriangle;
-        t->setPoint(0, Point(200, 100));
-        t->setPoint(1, Point(100, 500));
-        t->setPoint(2, Point(500, 400));
+        points[i][0] = Point(200, 100);
+        points[i][1] = Point(100, 500);
+        points[i][2] = Point(500, 400);
     }
+
 
     updateTexturing();
 }
@@ -329,7 +331,7 @@ void MyWindow::drawTriangles()
     for (int i = 0; i < 2; ++i)
     {
         QImage& image = (i == 0) ? *img : outputImage;
-        Triangle& triangle = (i == 0) ? inputTriangle : outputTriangle;
+        TrianglePtr& triangle = (i == 0) ? inputTriangle : outputTriangle;
         drawLine(image, triangle.point(0), triangle.point(1));
         drawLine(image, triangle.point(1), triangle.point(2));
         drawLine(image, triangle.point(2), triangle.point(0));
@@ -349,7 +351,7 @@ void MyWindow::drawTriangleHandles()
     bits[0] = img->bits();
     bits[1] = outputImage.bits();
 
-    Triangle* triangles[2];
+    TrianglePtr* triangles[2];
     triangles[0] = &inputTriangle;
     triangles[1] = &outputTriangle;
 
@@ -407,7 +409,7 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
         y -= outputImage_y0;
     }
 
-    Triangle &triangle = (image_index == 0) ? inputTriangle : outputTriangle;
+    TrianglePtr &triangle = (image_index == 0) ? inputTriangle : outputTriangle;
     for (int point = 0; point < 3; ++point)
     {
         Point delta = triangle.point(point) - Point(x, y);
