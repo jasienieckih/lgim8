@@ -75,14 +75,14 @@ private:
 
     // task-specific fields
     const int HANDLE_RADIUS = 4;
+    const int NUMBER_OF_TRIANGLES = 2;
+    const int NUMBER_OF_POINTS = 4;
     Point points[2][4];
-    TrianglePtr inputTriangle;
-    TrianglePtr outputTriangle;
+    TrianglePtr *triangles[2][2];
     QImage outputImage;
     QImage sourceImage;
     int outputImage_x0;
     int outputImage_y0;
-    int whichTriangleDragged;
     int whichPointDragged;
     bool isDragging;
     bool hidingMode;
@@ -98,6 +98,7 @@ private:
     void drawLine(QImage& image, Point p0, Point p1);
     void drawOriginalImage();
     void updateOutputImage();
+    void updateOutputTriangle(int index);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,

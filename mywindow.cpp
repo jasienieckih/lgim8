@@ -12,8 +12,6 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    inputTriangle(&points[0][0], &points[0][1], &points[0][2]),
-    outputTriangle(&points[1][0], &points[1][1], &points[1][2]),
     outputImage(600, 600, QImage::Format::Format_RGB32),
     sourceImage(":res/keskesej4_600x600.jpg"),
     outputImage_x0(730),
@@ -41,8 +39,10 @@ MyWindow::MyWindow(QWidget *parent) :
         points[i][0] = Point(200, 100);
         points[i][1] = Point(100, 500);
         points[i][2] = Point(500, 400);
+        points[i][3] = Point(400, 100);
+        triangles[i][0] = new TrianglePtr(&points[i][0], &points[i][1], &points[i][2]);
+        triangles[i][1] = new TrianglePtr(&points[i][0], &points[i][2], &points[i][3]);
     }
-
 
     updateTexturing();
 }
@@ -164,15 +164,15 @@ void MyWindow::drawOriginalImage()
     }
 }
 
-void MyWindow::updateOutputImage()
+void MyWindow::updateOutputTriangle(int index)
 {
-    Point oa = outputTriangle.point(0);
-    Point ob = outputTriangle.point(1);
-    Point oc = outputTriangle.point(2);
+    Point oa = triangles[1][index]->point(0);
+    Point ob = triangles[1][index]->point(1);
+    Point oc = triangles[1][index]->point(2);
 
-    Point ia = inputTriangle.point(0);
-    Point ib = inputTriangle.point(1);
-    Point ic = inputTriangle.point(2);
+    Point ia = triangles[0][index]->point(0);
+    Point ib = triangles[0][index]->point(1);
+    Point ic = triangles[0][index]->point(2);
 
     uchar* inputBits = sourceImage.bits();
     uchar* outputBits = outputImage.bits();
@@ -232,6 +232,14 @@ void MyWindow::updateOutputImage()
                 }
             }
         }
+    }
+}
+
+void MyWindow::updateOutputImage()
+{
+    for (int i = 0; i < NUMBER_OF_TRIANGLES; ++i)
+    {
+        updateOutputTriangle(i);
     }
 }
 
@@ -330,51 +338,52 @@ void MyWindow::drawTriangles()
 {
     for (int i = 0; i < 2; ++i)
     {
-        QImage& image = (i == 0) ? *img : outputImage;
-        TrianglePtr& triangle = (i == 0) ? inputTriangle : outputTriangle;
-        drawLine(image, triangle.point(0), triangle.point(1));
-        drawLine(image, triangle.point(1), triangle.point(2));
-        drawLine(image, triangle.point(2), triangle.point(0));
+        for (int t = 0; t < NUMBER_OF_TRIANGLES; ++t)
+        {
+            QImage& image = (i == 0) ? *img : outputImage;
+            TrianglePtr& triangle = *triangles[i][t];
+            drawLine(image, triangle.point(0), triangle.point(1));
+            drawLine(image, triangle.point(1), triangle.point(2));
+            drawLine(image, triangle.point(2), triangle.point(0));
+        }
     }
 }
 
 void MyWindow::drawTriangleHandles()
 {
-    const uchar HANDLE_COLORS[2][3][3] = {{{0xe0, 0x10, 0x10},
+    const uchar HANDLE_COLORS[2][3][3] = {{{0x10, 0xc8, 0x10},
                                            {0x10, 0xc8, 0x10},
-                                           {0x10, 0x10, 0xe0}},
-                                          {{0xe0, 0x10, 0x10},
+                                           {0x10, 0xc8, 0x10}},
+                                          {{0x10, 0xc8, 0x10},
                                            {0x10, 0xc8, 0x10},
-                                           {0x10, 0x10, 0xe0}}};
+                                           {0x10, 0xc8, 0x10}}};
 
     uchar* bits[2];
     bits[0] = img->bits();
     bits[1] = outputImage.bits();
 
-    TrianglePtr* triangles[2];
-    triangles[0] = &inputTriangle;
-    triangles[1] = &outputTriangle;
-
     for (int image = 0; image < 2; ++image)
     {
-        for (int point = 0; point < 3; ++point)
+        for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
         {
-            for (int x = triangles[image]->point(point).x() - HANDLE_RADIUS;
-                 x < triangles[image]->point(point).x() + HANDLE_RADIUS; ++x)
+            for (int point = 0; point < 3; ++point)
             {
-                for (int y = triangles[image]->point(point).y() - HANDLE_RADIUS;
-                     y < triangles[image]->point(point).y() + HANDLE_RADIUS; ++y)
+                for (int x = triangles[image][triangle]->point(point).x() - HANDLE_RADIUS;
+                     x < triangles[image][triangle]->point(point).x() + HANDLE_RADIUS; ++x)
                 {
-                    if (areCoordsValid(x, y))
+                    for (int y = triangles[image][triangle]->point(point).y() - HANDLE_RADIUS;
+                         y < triangles[image][triangle]->point(point).y() + HANDLE_RADIUS; ++y)
                     {
-                        int coords = bitsCoordFromXy(x, y);
-                        for (int component = 0; component < 3; ++component)
+                        if (areCoordsValid(x, y))
                         {
-                            bits[image][coords + component] = HANDLE_COLORS[image][point][component];
+                            int coords = bitsCoordFromXy(x, y);
+                            for (int component = 0; component < 3; ++component)
+                            {
+                                bits[image][coords + component] = HANDLE_COLORS[image][point][component];
+                            }
                         }
                     }
                 }
-
             }
         }
     }
@@ -409,14 +418,12 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
         y -= outputImage_y0;
     }
 
-    TrianglePtr &triangle = (image_index == 0) ? inputTriangle : outputTriangle;
-    for (int point = 0; point < 3; ++point)
+    for (int point = 0; point < NUMBER_OF_POINTS; ++point)
     {
-        Point delta = triangle.point(point) - Point(x, y);
+        Point delta = points[image_index][point] - Point(x, y);
         delta = delta.getAbsolute();
-        if (delta.x() < HANDLE_RADIUS and delta.y() < HANDLE_RADIUS)
+        if (delta.x() <= HANDLE_RADIUS and delta.y() <= HANDLE_RADIUS)
         {
-            whichTriangleDragged = image_index;
             whichPointDragged = point;
             isDragging = true;
             break;
@@ -444,7 +451,7 @@ void MyWindow::mouseReleaseEvent(QMouseEvent *event)
     if (isDragging)
     {
         isDragging = false;
-        ((whichTriangleDragged == 0) ? inputTriangle : outputTriangle).setPoint(whichPointDragged, Point(x, y));
+        points[image_index][whichPointDragged].set(x, y);
         updateTexturing();
     }
 }
