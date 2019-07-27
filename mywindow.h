@@ -26,6 +26,8 @@
 // or released inside a widget, or when the mouse cursor is moved.
 #include <QMouseEvent>
 
+#include "constants.h"
+#include "frame.h"
 #include "triangleptr.h"
 
 namespace Ui {
@@ -68,8 +70,6 @@ private:
 
     // task-specific fields
     const int HANDLE_RADIUS = 4;
-    const int NUMBER_OF_TRIANGLES = 2;
-    const int NUMBER_OF_POINTS = 4;
     Point points[2][4];
     TrianglePtr *triangles[2][2];
     QImage* images[2];
@@ -78,6 +78,9 @@ private:
     int whichPointDragged;
     bool isDragging;
     bool hidingMode;
+    int currentFrame;
+    int numberOfFrames;
+    Frame frames[];
 
     // task-specific functions
     void updateTexturing();
@@ -88,7 +91,7 @@ private:
     void drawTriangles();
     void drawLine(QImage& image, int x0, int y0, int x1, int y1);
     void drawLine(QImage& image, Point p0, Point p1);
-    void drawOriginalImages();
+    void drawImages();
     void updateOutputImage();
     void updateOutputTriangle(int index);
 private slots:

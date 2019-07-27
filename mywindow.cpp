@@ -13,7 +13,9 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     isDragging(false),
-    hidingMode(true)
+    hidingMode(true),
+    currentFrame(0),
+    numberOfFrames(1)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -145,12 +147,12 @@ int MyWindow::bitsCoordFromXy(int x, int y, int width)
     return 4 * (width * y + x);
 }
 
-void MyWindow::drawOriginalImages()
+void MyWindow::drawImages()
 {
     for (int i = 0; i < 2; ++i)
     {
         uchar *bits = images[i]->bits();
-        uchar *sourceBits = sourceImages[i]->bits();
+        uchar *sourceBits = (currentFrame == 0) ? sourceImages[i]->bits() : frames[currentFrame - 1].image.bits();
         for (int x = 0; x < img_width; ++x)
         {
             for (int y = 0; y < img_height; ++y)
@@ -345,7 +347,7 @@ void MyWindow::drawTriangles()
         for (int t = 0; t < NUMBER_OF_TRIANGLES; ++t)
         {
             QImage& image = *images[i];
-            TrianglePtr& triangle = *triangles[i][t];
+            TrianglePtr& triangle = (currentFrame == 0) ? *triangles[i][t] : *frames[currentFrame - 1].triangles[t];
             drawLine(image, triangle.point(0), triangle.point(1));
             drawLine(image, triangle.point(1), triangle.point(2));
             drawLine(image, triangle.point(2), triangle.point(0));
@@ -368,13 +370,15 @@ void MyWindow::drawTriangleHandles()
         bits[image] = images[image]->bits();
         for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
         {
+            TrianglePtr* trianglePtr = (currentFrame == 0) ? triangles[image][triangle]
+                                                        : frames[currentFrame - 1].triangles[triangle];
             for (int point = 0; point < 3; ++point)
             {
-                for (int x = triangles[image][triangle]->point(point).x() - HANDLE_RADIUS;
-                     x < triangles[image][triangle]->point(point).x() + HANDLE_RADIUS; ++x)
+                for (int x = trianglePtr->point(point).x() - HANDLE_RADIUS;
+                     x < trianglePtr->point(point).x() + HANDLE_RADIUS; ++x)
                 {
-                    for (int y = triangles[image][triangle]->point(point).y() - HANDLE_RADIUS;
-                         y < triangles[image][triangle]->point(point).y() + HANDLE_RADIUS; ++y)
+                    for (int y = trianglePtr->point(point).y() - HANDLE_RADIUS;
+                         y < trianglePtr->point(point).y() + HANDLE_RADIUS; ++y)
                     {
                         if (areCoordsValid(x, y))
                         {
@@ -395,8 +399,7 @@ void MyWindow::updateTexturing()
 {
     img_clean();
 
-    drawOriginalImages();
-    updateOutputImage();
+    drawImages();
     drawTriangles();
     drawTriangleHandles();
 

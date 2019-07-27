@@ -16,12 +16,15 @@ SOURCES += main.cpp\
         mywindow.cpp \
     point.cpp \
     triangle.cpp \
-    triangleptr.cpp
+    triangleptr.cpp \
+    frame.cpp
 
 HEADERS  += mywindow.h \
     point.h \
     triangle.h \
-    triangleptr.h
+    triangleptr.h \
+    frame.h \
+    constants.h
 
 FORMS    += mywindow.ui
 
