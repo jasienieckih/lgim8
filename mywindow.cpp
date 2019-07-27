@@ -432,9 +432,13 @@ void MyWindow::generateAnimation()
             Point ob = frames[frame].triangles[triangle]->point(1);
             Point oc = frames[frame].triangles[triangle]->point(2);
 
-            Point ia = triangles[0][triangle]->point(0);
-            Point ib = triangles[0][triangle]->point(1);
-            Point ic = triangles[0][triangle]->point(2);
+            Point ia[2], ib[2], ic[2];
+            for (int side = 0; side < 2; ++side)
+            {
+                ia[side] = triangles[side][triangle]->point(0);
+                ib[side] = triangles[side][triangle]->point(1);
+                ic[side] = triangles[side][triangle]->point(2);
+            }
 
             uchar* inputBits[2];
             inputBits[0] = sourceImages[0]->bits();
@@ -460,39 +464,83 @@ void MyWindow::generateAnimation()
                     double u = 1 - v - w;
                     if (not hidingMode or not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
                     {
-                        Point inputCoords = ia * u + ib * v + ic * w;
-                        int floorX = floor(inputCoords.x());
-                        int floorY = floor(inputCoords.y());
-                        int bitsCoords[2][2];
-                        bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    );
-                        bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    );
-                        bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1);
-                        bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1);
-                        if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                        Point inputCoords[2];
+                        for (int side = 0; side < 2; ++side)
+                        {
+                            inputCoords[side] = ia[side] * u + ib[side] * v + ic[side] * w;
+                        }
+                        int floors[2][2];
+                        for (int side = 0; side < 2; ++side)
+                        {
+                            for (int dim = 0; dim < 2; ++dim)
+                            {
+                                floors[side][dim] = floor((dim == 0) ? inputCoords[side].x() : inputCoords[side].y());
+                            }
+                        }
+
+                        // fixme: put this block one down
+                        int bitsCoords[2][2][2];
+                        for (int side = 0; side < 2; ++side)
+                        {
+                            for (int x = 0; x < 2; ++x)
+                            {
+                                for (int y = 0; y < 2; ++y)
+                                {
+                                    bitsCoords[side][y][x] = bitsCoordFromXy(floors[side][0] + x, floors[side][1] + y);
+                                }
+                            }
+                        }
+
+                        if (        areCoordsValid(inputCoords[0].x(), inputCoords[0].y())
+                                and areCoordsValid(inputCoords[1].x(), inputCoords[1].y())
                                 and areCoordsValid(x,               y              ))
                         {
                             // bilinear interpolation of color
                             int outputBitsCoords = bitsCoordFromXy(x, y);
                             for (int component = 0; component < 3; ++component)
                             {
-                                double neighbours[2][2];
-                                for (int i = 0; i < 2; ++i)
+                                double neighbours[2][2][2];
+                                for (int side = 0; side < 2; ++side)
                                 {
-                                    for (int j = 0; j < 2; ++j)
+                                    for (int i = 0; i < 2; ++i)
                                     {
-                                        neighbours[i][j]
-                                                = inputBits[0][bitsCoords[i][j] + component] * (1 - factor)
-                                                + inputBits[1][bitsCoords[i][j] + component] * factor;
+                                        for (int j = 0; j < 2; ++j)
+                                        {
+                                            neighbours[side][i][j]
+                                                    = inputBits[0][bitsCoords[side][i][j] + component] * (1 - factor)
+                                                    + inputBits[1][bitsCoords[side][i][j] + component] * factor;
+                                        }
                                     }
                                 }
-                                double interpolated[2];
-                                double factor = inputCoords.x() - floor(inputCoords.x());
-                                for (int i = 0; i < 2; ++i)
+                                double interpolated[2][2];
+                                double factors[2];
+                                for (int side = 0; side < 2; ++side)
                                 {
-                                    interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                                    factors[side] = inputCoords[side].x() - floor(inputCoords[side].x());
                                 }
-                                factor = inputCoords.y() - floor(inputCoords.y());
-                                double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+                                double interpolatedFactor = (1 - factor) * factors[0] + factor * factors[1];
+                                for (int side = 0; side < 2; ++side)
+                                {
+                                    for (int i = 0; i < 2; ++i)
+                                    {
+                                        interpolated[side][i] = (1 - interpolatedFactor) * neighbours[side][i][0]
+                                                        + interpolatedFactor       * neighbours[side][i][1];
+                                    }
+                                }
+
+                                for (int side = 0; side < 2; ++side)
+                                {
+                                    factors[side] = inputCoords[side].x() - floor(inputCoords[side].x());
+                                }
+                                interpolatedFactor = (1 - factor) * factors[0] + factor * factors[1];
+                                double interpolatedForEachSide[2];
+                                for (int side = 0; side < 2; ++side)
+                                {
+                                    interpolatedForEachSide[side] = (1 - interpolatedFactor) * interpolated[side][0]
+                                                                  + interpolatedFactor       * interpolated[side][1];
+                                }
+                                double finalInterpolated = (1 - factor) * interpolatedForEachSide[0]
+                                                         + factor       * interpolatedForEachSide[1];
                                 outputBits[outputBitsCoords + component] = round(finalInterpolated);
                             }
                         }
