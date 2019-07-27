@@ -477,24 +477,21 @@ void MyWindow::generateAnimation()
                                 floors[side][dim] = floor((dim == 0) ? inputCoords[side].x() : inputCoords[side].y());
                             }
                         }
-
-                        // fixme: put this block one down
-                        int bitsCoords[2][2][2];
-                        for (int side = 0; side < 2; ++side)
-                        {
-                            for (int x = 0; x < 2; ++x)
-                            {
-                                for (int y = 0; y < 2; ++y)
-                                {
-                                    bitsCoords[side][y][x] = bitsCoordFromXy(floors[side][0] + x, floors[side][1] + y);
-                                }
-                            }
-                        }
-
                         if (        areCoordsValid(inputCoords[0].x(), inputCoords[0].y())
                                 and areCoordsValid(inputCoords[1].x(), inputCoords[1].y())
                                 and areCoordsValid(x,               y              ))
                         {
+                            int bitsCoords[2][2][2];
+                            for (int side = 0; side < 2; ++side)
+                            {
+                                for (int x = 0; x < 2; ++x)
+                                {
+                                    for (int y = 0; y < 2; ++y)
+                                    {
+                                        bitsCoords[side][y][x] = bitsCoordFromXy(floors[side][0] + x, floors[side][1] + y);
+                                    }
+                                }
+                            }
                             // bilinear interpolation of color
                             int outputBitsCoords = bitsCoordFromXy(x, y);
                             for (int component = 0; component < 3; ++component)
