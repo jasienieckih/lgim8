@@ -428,16 +428,13 @@ void MyWindow::generateAnimation()
         // update triangles for the frame
         for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
         {
-            // todo: refactor so this workaround is not necessary
-            int index = triangle;
+            Point oa = frames[frame].triangles[triangle]->point(0);
+            Point ob = frames[frame].triangles[triangle]->point(1);
+            Point oc = frames[frame].triangles[triangle]->point(2);
 
-            Point oa = frames[frame].triangles[index]->point(0);
-            Point ob = frames[frame].triangles[index]->point(1);
-            Point oc = frames[frame].triangles[index]->point(2);
-
-            Point ia = triangles[0][index]->point(0);
-            Point ib = triangles[0][index]->point(1);
-            Point ic = triangles[0][index]->point(2);
+            Point ia = triangles[0][triangle]->point(0);
+            Point ib = triangles[0][triangle]->point(1);
+            Point ic = triangles[0][triangle]->point(2);
 
             uchar* inputBits[2];
             inputBits[0] = sourceImages[0]->bits();
