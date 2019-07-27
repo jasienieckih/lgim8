@@ -504,8 +504,8 @@ void MyWindow::generateAnimation()
                                         for (int j = 0; j < 2; ++j)
                                         {
                                             neighbours[side][i][j]
-                                                    = inputBits[0][bitsCoords[side][i][j] + component] * (1 - factor)
-                                                    + inputBits[1][bitsCoords[side][i][j] + component] * factor;
+                                                    = inputBits[side][bitsCoords[side][i][j] + component] * (1 - factor)
+                                                    + inputBits[side][bitsCoords[side][i][j] + component] * factor;
                                         }
                                     }
                                 }
