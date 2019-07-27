@@ -406,6 +406,106 @@ void MyWindow::updateTexturing()
     update();
 }
 
+void MyWindow::generateAnimation()
+{
+    numberOfFrames = ui->stepsSpinBox->value();
+    frames = new Frame[numberOfFrames - 1];
+    for (int frame = 0; frame < numberOfFrames - 1; ++frame)
+    {
+        // calculate the interpolation factor
+        //     it should be 1 / numberOfFrames for frame = 0 (first frame,
+        //     while zeroth frame is the original image interface)
+        //     and 1.0 for the last frame
+        double factor = (frame + 1.0) / numberOfFrames;
+
+        // calculate point values for the frame
+        for (int point = 0; point < NUMBER_OF_POINTS; ++point)
+        {
+            Point interpolatedPoint = points[0][point] * (1 - factor) + points[1][point] * factor;
+            frames[frame].points[point] = interpolatedPoint;
+        }
+
+        // update triangles for the frame
+        for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
+        {
+            // todo: refactor so this workaround is not necessary
+            int index = triangle;
+
+            Point oa = frames[frame].triangles[index]->point(0);
+            Point ob = frames[frame].triangles[index]->point(1);
+            Point oc = frames[frame].triangles[index]->point(2);
+
+            Point ia = triangles[0][index]->point(0);
+            Point ib = triangles[0][index]->point(1);
+            Point ic = triangles[0][index]->point(2);
+
+            uchar* inputBits[2];
+            inputBits[0] = sourceImages[0]->bits();
+            inputBits[1] = sourceImages[1]->bits();
+            uchar* outputBits = frames[frame].image.bits();
+
+            for (int x = 0; x < img_width; ++x)
+            {
+                for (int y = 0; y < img_height; ++y)
+                {
+                    // calculating input coordinates to source from through barycentrics
+                    double coeffs[3][2];
+                    for (int i = 0; i < 2; ++i)
+                    {
+                        double ai = oa.coord(i);
+                        coeffs[0][i] = (i == 0 ? x : y) - ai;
+                        coeffs[1][i] = oc.coord(i) - ai;
+                        coeffs[2][i] = ob.coord(i) - ai;
+                    }
+                    double denominator = coeffs[2][0] * coeffs[1][1] - coeffs[1][0] * coeffs[2][1];
+                    double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
+                    double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
+                    double u = 1 - v - w;
+                    if (not hidingMode or not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
+                    {
+                        Point inputCoords = ia * u + ib * v + ic * w;
+                        int floorX = floor(inputCoords.x());
+                        int floorY = floor(inputCoords.y());
+                        int bitsCoords[2][2];
+                        bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    );
+                        bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    );
+                        bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1);
+                        bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1);
+                        if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                                and areCoordsValid(x,               y              ))
+                        {
+                            // bilinear interpolation of color
+                            int outputBitsCoords = bitsCoordFromXy(x, y);
+                            for (int component = 0; component < 3; ++component)
+                            {
+                                double neighbours[2][2];
+                                for (int i = 0; i < 2; ++i)
+                                {
+                                    for (int j = 0; j < 2; ++j)
+                                    {
+                                        neighbours[i][j]
+                                                = inputBits[0][bitsCoords[i][j] + component] * (1 - factor)
+                                                + inputBits[1][bitsCoords[i][j] + component] * factor;
+                                    }
+                                }
+                                double interpolated[2];
+                                double factor = inputCoords.x() - floor(inputCoords.x());
+                                for (int i = 0; i < 2; ++i)
+                                {
+                                    interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                                }
+                                factor = inputCoords.y() - floor(inputCoords.y());
+                                double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+                                outputBits[outputBitsCoords + component] = round(finalInterpolated);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
     Point click = Point(event->x(), event->y());
@@ -444,5 +544,16 @@ void MyWindow::mouseReleaseEvent(QMouseEvent *event)
 void MyWindow::on_hideCheckBox_toggled(bool checked)
 {
     hidingMode = checked;
+    updateTexturing();
+}
+
+void MyWindow::on_animateButton_clicked()
+{
+    generateAnimation();
+}
+
+void MyWindow::on_frameSlider_valueChanged(int value)
+{
+    currentFrame = round(value / 1000.0 * (numberOfFrames - 1));
     updateTexturing();
 }

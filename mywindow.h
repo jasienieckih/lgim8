@@ -80,7 +80,7 @@ private:
     bool hidingMode;
     int currentFrame;
     int numberOfFrames;
-    Frame frames[];
+    Frame* frames;
 
     // task-specific functions
     void updateTexturing();
@@ -94,6 +94,7 @@ private:
     void drawImages();
     void updateOutputImage();
     void updateOutputTriangle(int index);
+    void generateAnimation();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
@@ -106,6 +107,8 @@ private slots:
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
     void on_hideCheckBox_toggled(bool checked);
+    void on_animateButton_clicked();
+    void on_frameSlider_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H
