@@ -94,6 +94,11 @@
       <string>Quit</string>
      </property>
     </widget>
+    <zorder>draw1Button</zorder>
+    <zorder>draw2Button</zorder>
+    <zorder>cleanButton</zorder>
+    <zorder>exitButton</zorder>
+    <zorder>hideCheckBox</zorder>
    </widget>
    <widget class="QFrame" name="drawFrame_2">
     <property name="geometry">
@@ -116,15 +121,15 @@
      <rect>
       <x>620</x>
       <y>540</y>
-      <width>101</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Hide outside</string>
+     <string>Hide triangles</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="tristate">
      <bool>false</bool>

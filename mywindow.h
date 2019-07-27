@@ -77,7 +77,7 @@ private:
     Point zeroCoordinates[2];
     int whichPointDragged;
     bool isDragging;
-    bool hidingMode;
+    bool triangleHidingMode;
     int currentFrame;
     int numberOfFrames;
     Frame* frames;

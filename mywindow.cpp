@@ -13,7 +13,7 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     isDragging(false),
-    hidingMode(true),
+    triangleHidingMode(false),
     currentFrame(0),
     numberOfFrames(1)
 {
@@ -438,8 +438,11 @@ void MyWindow::updateTexturing()
     img_clean();
 
     drawImages();
-    drawTriangles();
-    drawTriangleHandles();
+    if (not triangleHidingMode)
+    {
+        drawTriangles();
+        drawTriangleHandles();
+    }
 
     update();
 }
@@ -500,7 +503,7 @@ void MyWindow::generateAnimation()
                     double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
                     double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
                     double u = 1 - v - w;
-                    if (not hidingMode or not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
+                    if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
                     {
                         Point inputCoords[2];
                         for (int side = 0; side < 2; ++side)
@@ -626,7 +629,7 @@ void MyWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MyWindow::on_hideCheckBox_toggled(bool checked)
 {
-    hidingMode = checked;
+    triangleHidingMode = checked;
     updateTexturing();
 }
 
