@@ -152,7 +152,20 @@ void MyWindow::drawImages()
     for (int i = 0; i < 2; ++i)
     {
         uchar *bits = images[i]->bits();
-        uchar *sourceBits = (currentFrame == 0) ? sourceImages[i]->bits() : frames[currentFrame - 1].image.bits();
+        uchar *sourceBits;
+        if (currentFrame == 0)
+        {
+            sourceBits = sourceImages[i]->bits();
+        }
+        else if (currentFrame == numberOfFrames - 1)
+        {
+            sourceBits = sourceImages[(1 - i) % 2]->bits();
+        }
+        else
+        {
+            sourceBits = (i == 0) ? frames[currentFrame - 1].image.bits()
+                                  : frames[numberOfFrames - currentFrame - 1].image.bits();
+        }
         for (int x = 0; x < img_width; ++x)
         {
             for (int y = 0; y < img_height; ++y)
@@ -347,10 +360,23 @@ void MyWindow::drawTriangles()
         for (int t = 0; t < NUMBER_OF_TRIANGLES; ++t)
         {
             QImage& image = *images[i];
-            TrianglePtr& triangle = (currentFrame == 0) ? *triangles[i][t] : *frames[currentFrame - 1].triangles[t];
-            drawLine(image, triangle.point(0), triangle.point(1));
-            drawLine(image, triangle.point(1), triangle.point(2));
-            drawLine(image, triangle.point(2), triangle.point(0));
+            TrianglePtr* triangle;
+            if (currentFrame == 0)
+            {
+                triangle = triangles[i][t];
+            }
+            else if (currentFrame == numberOfFrames - 1)
+            {
+                triangle = triangles[(1 - i) % 2][t];
+            }
+            else
+            {
+                triangle = (i == 0) ? frames[currentFrame - 1].triangles[t]
+                                    : frames[numberOfFrames - currentFrame - 1].triangles[t];
+            }
+            drawLine(image, triangle->point(0), triangle->point(1));
+            drawLine(image, triangle->point(1), triangle->point(2));
+            drawLine(image, triangle->point(2), triangle->point(0));
         }
     }
 }
@@ -370,8 +396,20 @@ void MyWindow::drawTriangleHandles()
         bits[image] = images[image]->bits();
         for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
         {
-            TrianglePtr* trianglePtr = (currentFrame == 0) ? triangles[image][triangle]
-                                                        : frames[currentFrame - 1].triangles[triangle];
+            TrianglePtr* trianglePtr;
+            if (currentFrame == 0)
+            {
+                trianglePtr = triangles[image][triangle];
+            }
+            else if (currentFrame == numberOfFrames - 1)
+            {
+                trianglePtr = triangles[(1 - image) % 2][triangle];
+            }
+            else
+            {
+                trianglePtr = (image == 0) ? frames[currentFrame - 1].triangles[triangle]
+                                           : frames[numberOfFrames - currentFrame - 1].triangles[triangle];
+            }
             for (int point = 0; point < 3; ++point)
             {
                 for (int x = trianglePtr->point(point).x() - HANDLE_RADIUS;
