@@ -416,7 +416,7 @@ void MyWindow::generateAnimation()
         //     it should be 1 / numberOfFrames for frame = 0 (first frame,
         //     while zeroth frame is the original image interface)
         //     and 1.0 for the last frame
-        double factor = (frame + 1.0) / numberOfFrames;
+        double factor = (frame + 1.0) / (numberOfFrames - 1);
 
         // calculate point values for the frame
         for (int point = 0; point < NUMBER_OF_POINTS; ++point)
@@ -500,6 +500,9 @@ void MyWindow::generateAnimation()
                 }
             }
         }
+
+        // set progress bar
+        ui->progressBar->setValue(round(100.0 * factor));
     }
 }
 
