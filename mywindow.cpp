@@ -325,38 +325,33 @@ void MyWindow::drawTriangleHandles()
     uchar* bits[2];
     for (int image = 0; image < 2; ++image)
     {
-        bits[image] = images[image]->bits();
-        for (int triangle = 0; triangle < NUMBER_OF_TRIANGLES; ++triangle)
+        Point* points;
+        if (currentFrame == 0)
         {
-            TrianglePtr* trianglePtr;
-            if (currentFrame == 0)
+            points = this->points[image];
+        }
+        else if (currentFrame == numberOfFrames - 1)
+        {
+            points = this->points[(1 - image) % 2];
+        }
+        else
+        {
+            points = (image == 0) ? frames[currentFrame - 1].points
+                                  : frames[numberOfFrames - currentFrame - 1].points;
+        }
+        bits[image] = images[image]->bits();
+        for (int point = 0; point < NUMBER_OF_POINTS; ++point)
+        {
+            for (int x = points[point].x() - HANDLE_RADIUS; x < points[point].x() + HANDLE_RADIUS; ++x)
             {
-                trianglePtr = triangles[image][triangle];
-            }
-            else if (currentFrame == numberOfFrames - 1)
-            {
-                trianglePtr = triangles[(1 - image) % 2][triangle];
-            }
-            else
-            {
-                trianglePtr = (image == 0) ? frames[currentFrame - 1].triangles[triangle]
-                                           : frames[numberOfFrames - currentFrame - 1].triangles[triangle];
-            }
-            for (int point = 0; point < 3; ++point)
-            {
-                for (int x = trianglePtr->point(point).x() - HANDLE_RADIUS;
-                     x < trianglePtr->point(point).x() + HANDLE_RADIUS; ++x)
+                for (int y = points[point].y() - HANDLE_RADIUS; y < points[point].y() + HANDLE_RADIUS; ++y)
                 {
-                    for (int y = trianglePtr->point(point).y() - HANDLE_RADIUS;
-                         y < trianglePtr->point(point).y() + HANDLE_RADIUS; ++y)
+                    if (areCoordsValid(x, y))
                     {
-                        if (areCoordsValid(x, y))
+                        int coords = bitsCoordFromXy(x,y);
+                        for (int component = 0; component < 3; ++component)
                         {
-                            int coords = bitsCoordFromXy(x, y);
-                            for (int component = 0; component < 3; ++component)
-                            {
-                                bits[image][coords + component] = HANDLE_COLORS[image][point][component];
-                            }
+                            bits[image][coords + component] = HANDLE_COLORS[image][0][component];
                         }
                     }
                 }
