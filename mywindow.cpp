@@ -18,7 +18,8 @@ MyWindow::MyWindow(QWidget *parent) :
     isDragging(false),
     triangleHidingMode(false),
     currentFrame(0),
-    numberOfFrames(1)
+    numberOfFrames(1),
+    loopingMode(true)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -520,15 +521,29 @@ void MyWindow::playAnimation()
     const auto frameTime = std::chrono::milliseconds(int(round(frameTimeInMilliseconds)));
 
     auto startTime = std::chrono::system_clock::now();
+    auto nextTime = startTime;
     for (int i = 0; i < numberOfFrames; ++i)
     {
-        auto nextTime = startTime + i * frameTime;
+        nextTime += frameTime;
 
         int frameSliderValue = int(round(i * 1000.0 / (numberOfFrames - 1)));
         ui->frameSlider->setValue(frameSliderValue);
         repaint();
 
         std::this_thread::sleep_until(nextTime);
+    }
+    if (loopingMode)
+    {
+        for (int i = numberOfFrames - 2; i >= 0; --i)
+        {
+            nextTime += frameTime;
+
+            int frameSliderValue = int(round(i * 1000.0 / (numberOfFrames - 1)));
+            ui->frameSlider->setValue(frameSliderValue);
+            repaint();
+
+            std::this_thread::sleep_until(nextTime);
+        }
     }
 }
 
@@ -587,4 +602,9 @@ void MyWindow::on_frameSlider_valueChanged(int value)
 void MyWindow::on_playButton_clicked()
 {
     playAnimation();
+}
+
+void MyWindow::on_loopCheckBox_toggled(bool checked)
+{
+    loopingMode = checked;
 }

@@ -81,6 +81,7 @@ private:
     int currentFrame;
     int numberOfFrames;
     Frame* frames;
+    bool loopingMode;
 
     // task-specific functions
     void updateTexturing();
@@ -109,6 +110,7 @@ private slots:
     void on_animateButton_clicked();
     void on_frameSlider_valueChanged(int value);
     void on_playButton_clicked();
+    void on_loopCheckBox_toggled(bool checked);
 };
 
 #endif // MYWINDOW_H
