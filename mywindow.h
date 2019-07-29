@@ -70,8 +70,8 @@ private:
 
     // task-specific fields
     const int HANDLE_RADIUS = 4;
-    Point points[2][4];
-    TrianglePtr *triangles[2][2];
+    Point points[2][NUMBER_OF_POINTS];
+    TrianglePtr *triangles[2][NUMBER_OF_TRIANGLES];
     QImage* images[2];
     QImage* sourceImages[2];
     Point zeroCoordinates[2];

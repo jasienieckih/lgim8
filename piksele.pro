@@ -17,14 +17,16 @@ SOURCES += main.cpp\
     point.cpp \
     triangle.cpp \
     triangleptr.cpp \
-    frame.cpp
+    frame.cpp \
+    triangulationconfiguration.cpp
 
 HEADERS  += mywindow.h \
     point.h \
     triangle.h \
     triangleptr.h \
     frame.h \
-    constants.h
+    constants.h \
+    triangulationconfiguration.h
 
 FORMS    += mywindow.ui
 

@@ -9,6 +9,8 @@
 #include <chrono>
 #include <thread>
 
+#include "triangulationconfiguration.h"
+
 // The definition of the constructor of MyWindow class
 // First call the constructor of the parent class,
 // next create object representing the GUI
@@ -38,15 +40,23 @@ MyWindow::MyWindow(QWidget *parent) :
     sourceImages[0] = new QImage(":res/keskesej4_600x600.jpg");
     sourceImages[1] = new QImage(":res/leopard_600x600.png");
 
+    TriangulationConfiguration config;
+
     for (int i = 0; i < 2; ++i)
     {
+        for (int p = 0; p < NUMBER_OF_POINTS; ++p)
+        {
+            points[i][p] = config.points[i][p];
+        }
         images[i] = new QImage(img_width, img_height, QImage::Format::Format_RGB32);
-        points[i][0] = Point(200, 100);
-        points[i][1] = Point(100, 500);
-        points[i][2] = Point(500, 400);
-        points[i][3] = Point(400, 100);
-        triangles[i][0] = new TrianglePtr(&points[i][0], &points[i][1], &points[i][2]);
-        triangles[i][1] = new TrianglePtr(&points[i][0], &points[i][2], &points[i][3]);
+        //triangles[i][0] = new TrianglePtr(&points[i][0], &points[i][1], &points[i][3]);
+        for (int t = 0; t < NUMBER_OF_TRIANGLES; ++t)
+        {
+            int* singleConfig = config.triangles[t].indexes;
+            triangles[i][t] = new TrianglePtr(&points[i][singleConfig[0]],
+                                              &points[i][singleConfig[1]],
+                                              &points[i][singleConfig[2]]);
+        }
     }
 
     updateTexturing();
