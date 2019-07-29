@@ -92,8 +92,6 @@ private:
     void drawLine(QImage& image, int x0, int y0, int x1, int y1);
     void drawLine(QImage& image, Point p0, Point p1);
     void drawImages();
-    void updateOutputImage();
-    void updateOutputTriangle(int index);
     void generateAnimation();
 private slots:
     // Declarations of slots
