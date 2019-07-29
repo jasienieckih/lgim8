@@ -6,6 +6,9 @@
 // It is based on data from an XML file "mywindow.ui"
 #include "ui_mywindow.h"
 
+#include <chrono>
+#include <thread>
+
 // The definition of the constructor of MyWindow class
 // First call the constructor of the parent class,
 // next create object representing the GUI
@@ -510,6 +513,25 @@ void MyWindow::generateAnimation()
     }
 }
 
+void MyWindow::playAnimation()
+{
+    // 60 fps
+    const double frameTimeInMilliseconds = 1.0 / 60.0 * 1000.0;
+    const auto frameTime = std::chrono::milliseconds(int(round(frameTimeInMilliseconds)));
+
+    auto startTime = std::chrono::system_clock::now();
+    for (int i = 0; i < numberOfFrames; ++i)
+    {
+        auto nextTime = startTime + i * frameTime;
+
+        int frameSliderValue = int(round(i * 1000.0 / (numberOfFrames - 1)));
+        ui->frameSlider->setValue(frameSliderValue);
+        repaint();
+
+        std::this_thread::sleep_until(nextTime);
+    }
+}
+
 void MyWindow::mousePressEvent(QMouseEvent *event)
 {
     Point click = Point(event->x(), event->y());
@@ -560,4 +582,9 @@ void MyWindow::on_frameSlider_valueChanged(int value)
 {
     currentFrame = round(value / 1000.0 * (numberOfFrames - 1));
     updateTexturing();
+}
+
+void MyWindow::on_playButton_clicked()
+{
+    playAnimation();
 }

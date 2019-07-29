@@ -93,6 +93,7 @@ private:
     void drawLine(QImage& image, Point p0, Point p1);
     void drawImages();
     void generateAnimation();
+    void playAnimation();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
@@ -107,6 +108,7 @@ private slots:
     void on_hideCheckBox_toggled(bool checked);
     void on_animateButton_clicked();
     void on_frameSlider_valueChanged(int value);
+    void on_playButton_clicked();
 };
 
 #endif // MYWINDOW_H
