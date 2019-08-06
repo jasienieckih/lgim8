@@ -182,6 +182,9 @@ void MyWindow::updateProjection()
     finalMatrix = finalMatrix * rotationMatrixYAxis;
     finalMatrix = finalMatrix * translationMatrix;
     finalMatrix = finalMatrix * scalingMatrix;
+    finalMatrix = finalMatrix * shearingXMatrix;
+    finalMatrix = finalMatrix * shearingYMatrix;
+    finalMatrix = finalMatrix * shearingZMatrix;
 
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
@@ -346,5 +349,29 @@ void MyWindow::on_scalingZSlider_valueChanged(int value)
 {
     double dvalue = value / 500.0;
     scalingMatrix.set(2, 2, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_shearingXSlider_valueChanged(int value)
+{
+    double dvalue = (value - 1000.0) / 500.0;
+    shearingXMatrix.set(0, 1, dvalue);
+    shearingXMatrix.set(0, 2, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_shearingYSlider_valueChanged(int value)
+{
+    double dvalue = (value - 1000.0) / 500.0;
+    shearingYMatrix.set(1, 0, dvalue);
+    shearingYMatrix.set(1, 2, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_shearingZSlider_valueChanged(int value)
+{
+    double dvalue = (value - 1000.0) / 500.0;
+    shearingZMatrix.set(2, 0, dvalue);
+    shearingZMatrix.set(2, 1, dvalue);
     updateProjection();
 }
