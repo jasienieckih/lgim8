@@ -29,12 +29,35 @@ MyWindow::MyWindow(QWidget *parent) :
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
 
+    points.emplace_back(Point(0.0, 1.0, 0.0));
+    points.emplace_back(Point(0.0, 0.0, 0.707106781));
+    points.emplace_back(Point(-1.224744871, 0.0, 0.353553391));
+    points.emplace_back(Point( 1.224744871, 0.0, 0.353553391));
+
+    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2]));
+    polygons.emplace_back(Polygon(&points[0], &points[1], &points[3]));
+    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3]));
+    polygons.emplace_back(Polygon(&points[1], &points[2], &points[3]));
+
+    updateProjection();
 }
 
 // Definition of destructor
 MyWindow::~MyWindow()
 {
     delete ui;
+}
+
+void MyWindow::updateProjection()
+{
+    img_clean();
+
+    for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
+    {
+        // needs a drawTriangle() function to continue
+    }
+
+    update();
 }
 
 // Function (slot) called when user push the button 'Quit' (ExitButton)

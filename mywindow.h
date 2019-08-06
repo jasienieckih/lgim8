@@ -26,6 +26,11 @@
 // or released inside a widget, or when the mouse cursor is moved.
 #include <QMouseEvent>
 
+#include <vector>
+
+#include "point.h"
+#include "polygon.h"
+
 namespace Ui {
     class MyWindow;
 }
@@ -71,6 +76,12 @@ private:
     void img_draw1();
     void img_draw2();
 
+    // task-specific fields
+    std::vector<Point> points;
+    std::vector<Polygon> polygons;
+
+    // task-specific methods
+    void updateProjection();
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
