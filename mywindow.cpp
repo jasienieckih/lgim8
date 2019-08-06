@@ -6,6 +6,8 @@
 // It is based on data from an XML file "mywindow.ui"
 #include "ui_mywindow.h"
 
+#include "matrix.h"
+
 // The definition of the constructor of MyWindow class
 // First call the constructor of the parent class,
 // next create object representing the GUI
@@ -48,13 +50,140 @@ MyWindow::~MyWindow()
     delete ui;
 }
 
+bool MyWindow::areCoordsValid(int x, int y)
+{
+    return x >= 0 and x < img_width and y >= 0 and y < img_height;
+}
+
+void MyWindow::drawLine(Point p0, Point p1)
+{
+    drawLine(p0.x(), p0.y(), p1.x(), p1.y());
+}
+
+void MyWindow::drawLine(int x0, int y0, int x1, int y1)
+{
+    const uchar color[3] = {0x80, 0x80, 0x80};
+
+    uchar *ptr;
+    ptr = img->bits();
+
+    int x;
+    int y;
+    int pixel;
+
+    int dx = abs(x0 - x1);
+    int dy = abs(y0 - y1);
+
+    if (dx > dy)
+    {
+        if (x0 == x1)
+        {
+            for (y = y0; y <= y1; ++y)
+            {
+                x = x0;
+                if (areCoordsValid(x, y))
+                {
+                    pixel = img_width * 4 * y + 4 * x;
+                    for (int component = 0; component < 3; ++component)
+                    {
+                        ptr[pixel + component] = color[component];
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (x0 > x1)
+            {
+                std::swap(x0, x1);
+                std::swap(y0, y1);
+            }
+            double a = double(y1 - y0)/double(x1 - x0);
+            double b = y0 - a * x0;
+
+            for (x = x0; x <= x1; ++x)
+            {
+                y = int(round(a * x + b));
+                if (areCoordsValid(x, y))
+                {
+                    pixel = img_width * 4 * y + 4 * x;
+                    for (int component = 0; component < 3; ++component)
+                    {
+                        ptr[pixel + component] = color[component];
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if (y0 == y1)
+        {
+            for (x = x0; x <= x1; ++x)
+            {
+                y = y0;
+                if (areCoordsValid(x, y))
+                {
+                    pixel = img_width * 4 * x + 4 * y;
+                    for (int component = 0; component < 3; ++component)
+                    {
+                        ptr[pixel + component] = color[component];
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (y0 > y1)
+            {
+                std::swap(x0, x1);
+                std::swap(y0, y1);
+            }
+            double a = double(x1 - x0)/double(y1 - y0);
+            double b = x0 - a * y0;
+
+            for (y = y0; y <= y1; ++y)
+            {
+                x = int(round(a * y + b));
+                if (areCoordsValid(x, y))
+                {
+                    pixel = img_width * 4 * y + 4 * x;
+                    for (int component = 0; component < 3; ++component)
+                    {
+                        ptr[pixel + component] = color[component];
+                    }
+                }
+            }
+        }
+    }
+}
+
+void MyWindow::drawTriangle(Point a, Point b, Point c)
+{
+    drawLine(a, b);
+    drawLine(b, c);
+    drawLine(c, a);
+}
+
 void MyWindow::updateProjection()
 {
     img_clean();
 
+    Matrix precomputationMatrix;
+    precomputationMatrix = precomputationMatrix * 100;
+    precomputationMatrix.set(0, 3, 300.0);
+    precomputationMatrix.set(1, 3, 300.0);
+    precomputationMatrix.set(2, 3, 300.0);
+
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
-        // needs a drawTriangle() function to continue
+        Point points[3];
+        for (int i = 0; i < 3; ++i)
+        {
+            points[i] = polygon->point(i);
+            points[i] = precomputationMatrix * points[i];
+        }
+        drawTriangle(points[0], points[1], points[2]);
     }
 
     update();
