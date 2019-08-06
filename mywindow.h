@@ -81,6 +81,8 @@ private:
     std::vector<Point> points;
     std::vector<Polygon> polygons;
     Matrix translationMatrix;
+    Matrix rotationMatrixXAxis;
+    Matrix rotationMatrixYAxis;
 
     // task-specific methods
     void updateProjection();
@@ -102,6 +104,8 @@ private slots:
     void on_translationXSlider_valueChanged(int value);
     void on_translationYSlider_valueChanged(int value);
     void on_translationZSlider_valueChanged(int value);
+    void on_rotationSlider1_valueChanged(int value);
+    void on_rotationSlider2_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H

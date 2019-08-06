@@ -31,10 +31,11 @@ MyWindow::MyWindow(QWidget *parent) :
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
 
-    points.emplace_back(Point(0.0, -1.0, 0.0));
-    points.emplace_back(Point(0.0, 0.0, 0.707106781));
-    points.emplace_back(Point(-1.224744871, 0.0, 0.353553391));
-    points.emplace_back(Point( 1.224744871, 0.0, 0.353553391));
+
+    points.emplace_back(Point( 0.000000000, -0.612372436,  0.000000000 ));
+    points.emplace_back(Point( 0.000000000,  0.306186218,  0.530330056 ));
+    points.emplace_back(Point( 0.459279327,  0.306186218, -0.2651650430));
+    points.emplace_back(Point(-0.459279327,  0.306186218, -0.2651650430));
 
     polygons.emplace_back(Polygon(&points[0], &points[1], &points[2]));
     polygons.emplace_back(Polygon(&points[0], &points[1], &points[3]));
@@ -175,8 +176,11 @@ void MyWindow::updateProjection()
     projectionMatrix.set(1, 3, 300.0);
     projectionMatrix.set(2, 3, 300.0);
 
-    Matrix finalMatrix = translationMatrix;
+    Matrix finalMatrix;
     finalMatrix = finalMatrix * projectionMatrix;
+    finalMatrix = finalMatrix * rotationMatrixXAxis;
+    finalMatrix = finalMatrix * rotationMatrixYAxis;
+    finalMatrix = finalMatrix * translationMatrix;
 
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
@@ -280,21 +284,45 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
 void MyWindow::on_translationXSlider_valueChanged(int value)
 {
-    double dvalue = (value - 1000.0) / 2.0;
+    double dvalue = (value - 1000.0) / 500.0;
     translationMatrix.set(0, 3, dvalue);
     updateProjection();
 }
 
 void MyWindow::on_translationYSlider_valueChanged(int value)
 {
-    double dvalue = (value - 1000.0) / 2.0;
+    double dvalue = (value - 1000.0) / 500.0;
     translationMatrix.set(1, 3, dvalue);
     updateProjection();
 }
 
 void MyWindow::on_translationZSlider_valueChanged(int value)
 {
-    double dvalue = (value - 1000.0) / 2.0;
+    double dvalue = (value - 1000.0) / 500.0;
     translationMatrix.set(2, 3, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_rotationSlider1_valueChanged(int value)
+{
+    double angle = value / 1000.0 * 2 * M_PI;
+    double sine = sin(angle);
+    double cosine = cos(angle);
+    rotationMatrixXAxis.set(1, 1, cosine);
+    rotationMatrixXAxis.set(1, 2, -sine);
+    rotationMatrixXAxis.set(2, 1, sine);
+    rotationMatrixXAxis.set(2, 2, cosine);
+    updateProjection();
+}
+
+void MyWindow::on_rotationSlider2_valueChanged(int value)
+{
+    double angle = value / 1000.0 * 2 * M_PI;
+    double sine = sin(angle);
+    double cosine = cos(angle);
+    rotationMatrixYAxis.set(0, 0, cosine);
+    rotationMatrixYAxis.set(0, 2, sine);
+    rotationMatrixYAxis.set(2, 0, -sine);
+    rotationMatrixYAxis.set(2, 2, cosine);
     updateProjection();
 }
