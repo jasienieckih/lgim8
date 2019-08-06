@@ -28,6 +28,7 @@
 
 #include <vector>
 
+#include "matrix.h"
 #include "point.h"
 #include "polygon.h"
 
@@ -79,6 +80,7 @@ private:
     // task-specific fields
     std::vector<Point> points;
     std::vector<Polygon> polygons;
+    Matrix translationMatrix;
 
     // task-specific methods
     void updateProjection();
@@ -97,6 +99,9 @@ private slots:
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent*);
 
+    void on_translationXSlider_valueChanged(int value);
+    void on_translationYSlider_valueChanged(int value);
+    void on_translationZSlider_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H

@@ -31,7 +31,7 @@ MyWindow::MyWindow(QWidget *parent) :
     // and height. Set its format for 32-bit RGB (0xffRRGGBB).
     img = new QImage(img_width,img_height,QImage::Format_RGB32);
 
-    points.emplace_back(Point(0.0, 1.0, 0.0));
+    points.emplace_back(Point(0.0, -1.0, 0.0));
     points.emplace_back(Point(0.0, 0.0, 0.707106781));
     points.emplace_back(Point(-1.224744871, 0.0, 0.353553391));
     points.emplace_back(Point( 1.224744871, 0.0, 0.353553391));
@@ -169,11 +169,14 @@ void MyWindow::updateProjection()
 {
     img_clean();
 
-    Matrix precomputationMatrix;
-    precomputationMatrix = precomputationMatrix * 100;
-    precomputationMatrix.set(0, 3, 300.0);
-    precomputationMatrix.set(1, 3, 300.0);
-    precomputationMatrix.set(2, 3, 300.0);
+    Matrix projectionMatrix;
+    projectionMatrix = projectionMatrix * 100;
+    projectionMatrix.set(0, 3, 300.0);
+    projectionMatrix.set(1, 3, 300.0);
+    projectionMatrix.set(2, 3, 300.0);
+
+    Matrix finalMatrix = translationMatrix;
+    finalMatrix = finalMatrix * projectionMatrix;
 
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
@@ -181,7 +184,7 @@ void MyWindow::updateProjection()
         for (int i = 0; i < 3; ++i)
         {
             points[i] = polygon->point(i);
-            points[i] = precomputationMatrix * points[i];
+            points[i] = finalMatrix * points[i];
         }
         drawTriangle(points[0], points[1], points[2]);
     }
@@ -273,4 +276,25 @@ void MyWindow::mousePressEvent(QMouseEvent *event)
 
     x -= img_x0;
     y -= img_y0;
+}
+
+void MyWindow::on_translationXSlider_valueChanged(int value)
+{
+    double dvalue = (value - 1000.0) / 2.0;
+    translationMatrix.set(0, 3, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_translationYSlider_valueChanged(int value)
+{
+    double dvalue = (value - 1000.0) / 2.0;
+    translationMatrix.set(1, 3, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_translationZSlider_valueChanged(int value)
+{
+    double dvalue = (value - 1000.0) / 2.0;
+    translationMatrix.set(2, 3, dvalue);
+    updateProjection();
 }
