@@ -83,6 +83,7 @@ private:
     Matrix translationMatrix;
     Matrix rotationMatrixXAxis;
     Matrix rotationMatrixYAxis;
+    Matrix scalingMatrix;
 
     // task-specific methods
     void updateProjection();
@@ -106,6 +107,9 @@ private slots:
     void on_translationZSlider_valueChanged(int value);
     void on_rotationSlider1_valueChanged(int value);
     void on_rotationSlider2_valueChanged(int value);
+    void on_scalingXSlider_valueChanged(int value);
+    void on_scalingYSlider_valueChanged(int value);
+    void on_scalingZSlider_valueChanged(int value);
 };
 
 #endif // MYWINDOW_H

@@ -181,6 +181,7 @@ void MyWindow::updateProjection()
     finalMatrix = finalMatrix * rotationMatrixXAxis;
     finalMatrix = finalMatrix * rotationMatrixYAxis;
     finalMatrix = finalMatrix * translationMatrix;
+    finalMatrix = finalMatrix * scalingMatrix;
 
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
@@ -324,5 +325,26 @@ void MyWindow::on_rotationSlider2_valueChanged(int value)
     rotationMatrixYAxis.set(0, 2, sine);
     rotationMatrixYAxis.set(2, 0, -sine);
     rotationMatrixYAxis.set(2, 2, cosine);
+    updateProjection();
+}
+
+void MyWindow::on_scalingXSlider_valueChanged(int value)
+{
+    double dvalue = value / 500.0;
+    scalingMatrix.set(0, 0, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_scalingYSlider_valueChanged(int value)
+{
+    double dvalue = value / 500.0;
+    scalingMatrix.set(1, 1, dvalue);
+    updateProjection();
+}
+
+void MyWindow::on_scalingZSlider_valueChanged(int value)
+{
+    double dvalue = value / 500.0;
+    scalingMatrix.set(2, 2, dvalue);
     updateProjection();
 }
