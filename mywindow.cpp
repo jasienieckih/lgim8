@@ -15,7 +15,7 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     scalingTogether(false),
-    brickTexture(":res/gold_brick2.png")
+    brickTexture(":res/blue_plastic.png")
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -319,10 +319,9 @@ void MyWindow::img_clean()
         // each row has img_width pixels and 4 * img_width bytes (1 pixel = 4 bytes)
         for(j=0; j<img_width; j++)
         {
-            // to obtain a white color we set each component on max value (255)
-            ptr[img_width*4*i + 4*j]=255; // BLUE component
-            ptr[img_width*4*i + 4*j + 1] = 255; // GREEN component
-            ptr[img_width*4*i + 4*j + 2] = 255; // RED component
+            ptr[img_width*4*i + 4*j    ] = 0x00; // BLUE component
+            ptr[img_width*4*i + 4*j + 1] = 0x00; // GREEN component
+            ptr[img_width*4*i + 4*j + 2] = 0x00; // RED component
         }
     }
 }

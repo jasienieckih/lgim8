@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>res/gold_brick2.png</file>
         <file>res/gold_brick.png</file>
+        <file>res/blue_plastic.png</file>
     </qresource>
 </RCC>
