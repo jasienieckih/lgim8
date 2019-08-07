@@ -154,25 +154,28 @@ void MyWindow::updateProjection()
 
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
-        Point points[3];
+        Point originalPoints[3];
         for (int i = 0; i < 3; ++i)
         {
-            points[i] = polygon->point(i);
-            points[i] = finalMatrix * points[i];
+            originalPoints[i] = polygon->point(i);
+            originalPoints[i] = finalMatrix * originalPoints[i];
         }
-        Point centroid = (points[0] + points[1] + points[2]) * 0.333333333;
+        Point projectedPoints[3];
         for (int i = 0; i < 3; ++i)
         {
-            points[i].setX(points[i].x() * (distance / (points[i].z() + distance)));
-            points[i].setY(points[i].y() * (distance / (points[i].z() + distance)));
-            points[i] = projectionMatrix * points[i];
+            projectedPoints[i].setX(originalPoints[i].x() * (distance / (originalPoints[i].z() + distance)));
+            projectedPoints[i].setY(originalPoints[i].y() * (distance / (originalPoints[i].z() + distance)));
+            projectedPoints[i].setZ(1.0);
+            projectedPoints[i] = projectionMatrix * projectedPoints[i];
         }
+
+        Point centroid = (originalPoints[0] + originalPoints[1] + originalPoints[2]) * 0.333333333;
         double centroidToIrisDistance = centroid.distanceFrom(Point(0.0, 0.0, -distance));
 
-        int xMin = floor(min(points[0].x(), points[1].x(), points[2].x()));
-        int yMin = floor(min(points[0].y(), points[1].y(), points[2].y()));
-        int xMax =  ceil(max(points[0].x(), points[1].x(), points[2].x()));
-        int yMax =  ceil(max(points[0].y(), points[1].y(), points[2].y()));
+        int xMin = floor(min(projectedPoints[0].x(), projectedPoints[1].x(), projectedPoints[2].x()));
+        int yMin = floor(min(projectedPoints[0].y(), projectedPoints[1].y(), projectedPoints[2].y()));
+        int xMax =  ceil(max(projectedPoints[0].x(), projectedPoints[1].x(), projectedPoints[2].x()));
+        int yMax =  ceil(max(projectedPoints[0].y(), projectedPoints[1].y(), projectedPoints[2].y()));
 
         for (int x = xMin; x <= xMax; ++x)
         {
@@ -184,10 +187,10 @@ void MyWindow::updateProjection()
                     double coeffs[3][2];
                     for (int i = 0; i < 2; ++i)
                     {
-                        double ai = points[0].coord(i);
+                        double ai = projectedPoints[0].coord(i);
                         coeffs[0][i] = (i == 0 ? x : y) - ai;
-                        coeffs[1][i] = points[2].coord(i) - ai;
-                        coeffs[2][i] = points[1].coord(i) - ai;
+                        coeffs[1][i] = projectedPoints[2].coord(i) - ai;
+                        coeffs[2][i] = projectedPoints[1].coord(i) - ai;
                     }
                     double denominator = coeffs[2][0] * coeffs[1][1] - coeffs[1][0] * coeffs[2][1];
                     double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
@@ -205,6 +208,9 @@ void MyWindow::updateProjection()
                         if (        areCoordsValid(inputCoords.x(), inputCoords.y())
                                 and areCoordsValid(x,               y              ))
                         {
+                            // lightning calculation
+                            double lightningCoefficient = 0.5;
+
                             // bilinear interpolation of color
 
                             int bitsCoords[2][2];
@@ -235,7 +241,8 @@ void MyWindow::updateProjection()
                                 }
                                 factor = inputCoords.y() - floor(inputCoords.y());
                                 double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
-                                outputBits[outputBitsCoords + component] = round(finalInterpolated);
+                                double finalColor = lightningCoefficient * finalInterpolated;
+                                outputBits[outputBitsCoords + component] = round(finalColor);
                             }
                             zBuffer[x][y] = centroidToIrisDistance;
                         }
