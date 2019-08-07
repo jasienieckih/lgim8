@@ -384,7 +384,7 @@ void MyWindow::on_rotationSlider2_valueChanged(int value)
 
 void MyWindow::on_scalingXSlider_valueChanged(int value)
 {
-    double dvalue = value / 500.0;
+    double dvalue = value / 1000.0;
     scalingMatrix.set(0, 0, dvalue);
     if (scalingTogether)
     {
@@ -398,7 +398,7 @@ void MyWindow::on_scalingXSlider_valueChanged(int value)
 
 void MyWindow::on_scalingYSlider_valueChanged(int value)
 {
-    double dvalue = value / 500.0;
+    double dvalue = value / 1000.0;
     scalingMatrix.set(1, 1, dvalue);
     if (scalingTogether)
     {
@@ -412,7 +412,7 @@ void MyWindow::on_scalingYSlider_valueChanged(int value)
 
 void MyWindow::on_scalingZSlider_valueChanged(int value)
 {
-    double dvalue = value / 500.0;
+    double dvalue = value / 1000.0;
     scalingMatrix.set(2, 2, dvalue);
     if (scalingTogether)
     {
