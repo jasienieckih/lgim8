@@ -171,20 +171,21 @@ void MyWindow::updateProjection()
     img_clean();
 
     Matrix projectionMatrix;
-    projectionMatrix = projectionMatrix * 100;
+    projectionMatrix = projectionMatrix * 300;
     projectionMatrix.set(0, 3, 300.0);
     projectionMatrix.set(1, 3, 300.0);
     projectionMatrix.set(2, 3, 300.0);
 
+    double distance = 5.0;
+
     Matrix finalMatrix;
-    finalMatrix = finalMatrix * projectionMatrix;
+    finalMatrix = finalMatrix * translationMatrix;
     finalMatrix = finalMatrix * rotationMatrixXAxis;
     finalMatrix = finalMatrix * rotationMatrixYAxis;
-    finalMatrix = finalMatrix * translationMatrix;
-    finalMatrix = finalMatrix * scalingMatrix;
     finalMatrix = finalMatrix * shearingXMatrix;
     finalMatrix = finalMatrix * shearingYMatrix;
     finalMatrix = finalMatrix * shearingZMatrix;
+    finalMatrix = finalMatrix * scalingMatrix;
 
     for (auto polygon = polygons.begin(); polygon != polygons.end(); ++polygon)
     {
@@ -193,6 +194,9 @@ void MyWindow::updateProjection()
         {
             points[i] = polygon->point(i);
             points[i] = finalMatrix * points[i];
+            points[i].setX(points[i].x() * (distance / (points[i].z() + distance)));
+            points[i].setY(points[i].y() * (distance / (points[i].z() + distance)));
+            points[i] = projectionMatrix * points[i];
         }
         drawTriangle(points[0], points[1], points[2]);
     }
