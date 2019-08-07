@@ -120,90 +120,13 @@ int MyWindow::bitsCoordFromXy(int x, int y, int width)
     return 4 * (width * y + x);
 }
 
-void MyWindow::drawTriangle(Point a, Point b, Point c, double centroidToIrisDistance)
-{
-    uchar* outputBits = img->bits();
-
-    int xMin = floor(min(a.x(), b.x(), c.x()));
-    int yMin = floor(min(a.y(), b.y(), c.y()));
-    int xMax =  ceil(max(a.x(), b.x(), c.x()));
-    int yMax =  ceil(max(a.y(), b.y(), c.y()));
-
-    for (int x = xMin; x <= xMax; ++x)
-    {
-        for (int y = yMin; y <= yMax; ++y)
-        {
-            if (areCoordsValid(x, y) and zBuffer[x][y] > centroidToIrisDistance)
-            {
-                // calculating input coordinates to source from through barycentrics
-                double coeffs[3][2];
-                for (int i = 0; i < 2; ++i)
-                {
-                    double ai = a.coord(i);
-                    coeffs[0][i] = (i == 0 ? x : y) - ai;
-                    coeffs[1][i] = c.coord(i) - ai;
-                    coeffs[2][i] = b.coord(i) - ai;
-                }
-                double denominator = coeffs[2][0] * coeffs[1][1] - coeffs[1][0] * coeffs[2][1];
-                double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
-                double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
-                double u = 1 - v - w;
-                if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
-                {
-                    Point ia = brickTexture.point(0);
-                    Point ib = brickTexture.point(1);
-                    Point ic = brickTexture.point(2);
-
-                    Point inputCoords = ia * u + ib * v + ic * w;
-                    int floorX = floor(inputCoords.x());
-                    int floorY = floor(inputCoords.y());
-                    if (        areCoordsValid(inputCoords.x(), inputCoords.y())
-                            and areCoordsValid(x,               y              ))
-                    {
-                        // bilinear interpolation of color
-
-                        int bitsCoords[2][2];
-                        bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , 300);
-                        bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , 300);
-                        bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, 300);
-                        bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, 300);
-
-                        const uchar* inputBits = brickTexture.bits();
-
-                        int outputBitsCoords = bitsCoordFromXy(x, y);
-
-                        for (int component = 0; component < 3; ++component)
-                        {
-                            double neighbours[2][2];
-                            for (int i = 0; i < 2; ++i)
-                            {
-                                for (int j = 0; j < 2; ++j)
-                                {
-                                    neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
-                                }
-                            }
-                            double interpolated[2];
-                            double factor = inputCoords.x() - floor(inputCoords.x());
-                            for (int i = 0; i < 2; ++i)
-                            {
-                                interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
-                            }
-                            factor = inputCoords.y() - floor(inputCoords.y());
-                            double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
-                            outputBits[outputBitsCoords + component] = round(finalInterpolated);
-                        }
-                        zBuffer[x][y] = centroidToIrisDistance;
-                    }
-                }
-            }
-        }
-    }
-}
-
 void MyWindow::updateProjection()
 {
     img_clean();
 
+    uchar* outputBits = img->bits();
+
+    double zBuffer[600][600];
     for (int x = 0; x < 600; ++x)
     {
         for (int y = 0; y < 600; ++y)
@@ -245,7 +168,81 @@ void MyWindow::updateProjection()
             points[i] = projectionMatrix * points[i];
         }
         double centroidToIrisDistance = centroid.distanceFrom(Point(0.0, 0.0, -distance));
-        drawTriangle(points[0], points[1], points[2], centroidToIrisDistance);
+
+        int xMin = floor(min(points[0].x(), points[1].x(), points[2].x()));
+        int yMin = floor(min(points[0].y(), points[1].y(), points[2].y()));
+        int xMax =  ceil(max(points[0].x(), points[1].x(), points[2].x()));
+        int yMax =  ceil(max(points[0].y(), points[1].y(), points[2].y()));
+
+        for (int x = xMin; x <= xMax; ++x)
+        {
+            for (int y = yMin; y <= yMax; ++y)
+            {
+                if (areCoordsValid(x, y) and zBuffer[x][y] > centroidToIrisDistance)
+                {
+                    // calculating input coordinates to source from through barycentrics
+                    double coeffs[3][2];
+                    for (int i = 0; i < 2; ++i)
+                    {
+                        double ai = points[0].coord(i);
+                        coeffs[0][i] = (i == 0 ? x : y) - ai;
+                        coeffs[1][i] = points[2].coord(i) - ai;
+                        coeffs[2][i] = points[1].coord(i) - ai;
+                    }
+                    double denominator = coeffs[2][0] * coeffs[1][1] - coeffs[1][0] * coeffs[2][1];
+                    double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
+                    double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
+                    double u = 1 - v - w;
+                    if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
+                    {
+                        Point ia = brickTexture.point(0);
+                        Point ib = brickTexture.point(1);
+                        Point ic = brickTexture.point(2);
+
+                        Point inputCoords = ia * u + ib * v + ic * w;
+                        int floorX = floor(inputCoords.x());
+                        int floorY = floor(inputCoords.y());
+                        if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                                and areCoordsValid(x,               y              ))
+                        {
+                            // bilinear interpolation of color
+
+                            int bitsCoords[2][2];
+                            bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , 300);
+                            bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , 300);
+                            bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, 300);
+                            bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, 300);
+
+                            const uchar* inputBits = brickTexture.bits();
+
+                            int outputBitsCoords = bitsCoordFromXy(x, y);
+
+                            for (int component = 0; component < 3; ++component)
+                            {
+                                double neighbours[2][2];
+                                for (int i = 0; i < 2; ++i)
+                                {
+                                    for (int j = 0; j < 2; ++j)
+                                    {
+                                        neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
+                                    }
+                                }
+                                double interpolated[2];
+                                double factor = inputCoords.x() - floor(inputCoords.x());
+                                for (int i = 0; i < 2; ++i)
+                                {
+                                    interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                                }
+                                factor = inputCoords.y() - floor(inputCoords.y());
+                                double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+                                outputBits[outputBitsCoords + component] = round(finalInterpolated);
+                            }
+                            zBuffer[x][y] = centroidToIrisDistance;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     update();
