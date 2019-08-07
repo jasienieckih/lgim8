@@ -32,6 +32,16 @@ double Point::coord(int index) const
     return value_y;
 }
 
+double Point::distanceFrom(Point other) const
+{
+    Point d = Point(value_x - other.value_x, value_y - other.value_y, value_z - other.value_z);
+    d.value_x *= d.value_x;
+    d.value_y *= d.value_y;
+    d.value_z *= d.value_z;
+    double ret = sqrt(d.value_x + d.value_y + d.value_z);
+    return ret;
+}
+
 void Point::set(double x, double y, double z)
 {
     value_x = x;

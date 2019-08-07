@@ -90,10 +90,11 @@ private:
     Matrix shearingZMatrix;
     bool scalingTogether;
     Texture brickTexture;
+    double zBuffer[600][600];
 
     // task-specific methods
     void updateProjection();
-    void drawTriangle(Point a, Point b, Point c);
+    void drawTriangle(Point a, Point b, Point c, double centroidToIrisDistance);
     bool areCoordsValid(int x, int y);
     int bitsCoordFromXy(int x, int y);
     int bitsCoordFromXy(int x, int y, int width);

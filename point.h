@@ -14,6 +14,7 @@ public:
     double y() const;
     double z() const;
     double coord(int index) const;
+    double distanceFrom(Point other) const;
     void set(double x, double y, double z);
     void setX(double x);
     void setY(double y);
