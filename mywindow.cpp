@@ -139,12 +139,13 @@ void MyWindow::updateTransformation()
     postCoordinateTransformMatrix.set(0, 2, -300);
     postCoordinateTransformMatrix.set(1, 2, -300);
 
-    Matrix transformationMatrix = translationMatrix;
+    Matrix transformationMatrix;
     transformationMatrix = transformationMatrix * preCoordinateTransformMatrix;
     transformationMatrix = transformationMatrix * scalingMatrix;
-    transformationMatrix = transformationMatrix * rotationMatrix;
     transformationMatrix = transformationMatrix * xShearingMatrix;
     transformationMatrix = transformationMatrix * yShearingMatrix;
+    transformationMatrix = transformationMatrix * rotationMatrix;
+    transformationMatrix = transformationMatrix * translationMatrix;
     transformationMatrix = transformationMatrix * postCoordinateTransformMatrix;
 
     for (int x = 0; x < img_width; ++x)
