@@ -13,7 +13,8 @@
 // next create object representing the GUI
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MyWindow)
+    ui(new Ui::MyWindow),
+    scalingTogether(false)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -339,6 +340,13 @@ void MyWindow::on_scalingXSlider_valueChanged(int value)
 {
     double dvalue = value / 500.0;
     scalingMatrix.set(0, 0, dvalue);
+    if (scalingTogether)
+    {
+        scalingMatrix.set(1, 1, dvalue);
+        scalingMatrix.set(2, 2, dvalue);
+        ui->scalingYSlider->setValue(value);
+        ui->scalingZSlider->setValue(value);
+    }
     updateProjection();
 }
 
@@ -346,6 +354,13 @@ void MyWindow::on_scalingYSlider_valueChanged(int value)
 {
     double dvalue = value / 500.0;
     scalingMatrix.set(1, 1, dvalue);
+    if (scalingTogether)
+    {
+        scalingMatrix.set(0, 0, dvalue);
+        scalingMatrix.set(2, 2, dvalue);
+        ui->scalingXSlider->setValue(value);
+        ui->scalingZSlider->setValue(value);
+    }
     updateProjection();
 }
 
@@ -353,6 +368,13 @@ void MyWindow::on_scalingZSlider_valueChanged(int value)
 {
     double dvalue = value / 500.0;
     scalingMatrix.set(2, 2, dvalue);
+    if (scalingTogether)
+    {
+        scalingMatrix.set(0, 0, dvalue);
+        scalingMatrix.set(1, 1, dvalue);
+        ui->scalingXSlider->setValue(value);
+        ui->scalingYSlider->setValue(value);
+    }
     updateProjection();
 }
 
@@ -394,4 +416,9 @@ void MyWindow::on_resetButton_clicked()
     ui->shearingYSlider->setValue(1000);
     ui->shearingZSlider->setValue(1000);
     updateProjection();
+}
+
+void MyWindow::on_scalingTogetherBox_toggled(bool checked)
+{
+    scalingTogether = checked;
 }

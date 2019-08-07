@@ -87,6 +87,7 @@ private:
     Matrix shearingXMatrix;
     Matrix shearingYMatrix;
     Matrix shearingZMatrix;
+    bool scalingTogether;
 
     // task-specific methods
     void updateProjection();
@@ -117,6 +118,7 @@ private slots:
     void on_shearingYSlider_valueChanged(int value);
     void on_shearingZSlider_valueChanged(int value);
     void on_resetButton_clicked();
+    void on_scalingTogetherBox_toggled(bool checked);
 };
 
 #endif // MYWINDOW_H
