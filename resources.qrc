@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/brick_wall_texture300.png</file>
+        <file>res/gold_brick2.png</file>
+        <file>res/gold_brick.png</file>
     </qresource>
 </RCC>

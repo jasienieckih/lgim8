@@ -15,7 +15,7 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     scalingTogether(false),
-    brickTexture(":res/brick_wall_texture300.png")
+    brickTexture(":res/gold_brick2.png")
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
