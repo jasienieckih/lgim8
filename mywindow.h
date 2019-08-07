@@ -116,6 +116,7 @@ private slots:
     void on_shearingXSlider_valueChanged(int value);
     void on_shearingYSlider_valueChanged(int value);
     void on_shearingZSlider_valueChanged(int value);
+    void on_resetButton_clicked();
 };
 
 #endif // MYWINDOW_H

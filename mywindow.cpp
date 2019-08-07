@@ -379,3 +379,19 @@ void MyWindow::on_shearingZSlider_valueChanged(int value)
     shearingZMatrix.set(2, 1, dvalue);
     updateProjection();
 }
+
+void MyWindow::on_resetButton_clicked()
+{
+    ui->translationXSlider->setValue(1000);
+    ui->translationYSlider->setValue(1000);
+    ui->translationZSlider->setValue(1000);
+    ui->scalingXSlider->setValue(1000);
+    ui->scalingYSlider->setValue(1000);
+    ui->scalingZSlider->setValue(1000);
+    ui->rotationSlider1->setValue(0);
+    ui->rotationSlider2->setValue(0);
+    ui->shearingXSlider->setValue(1000);
+    ui->shearingYSlider->setValue(1000);
+    ui->shearingZSlider->setValue(1000);
+    updateProjection();
+}
