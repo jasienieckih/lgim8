@@ -124,8 +124,6 @@ void MyWindow::drawTriangle(Point a, Point b, Point c)
 {
     uchar* outputBits = img->bits();
 
-    const uchar color[3] = {0x88, 0x44, 0x22};
-
     int xMin = floor(min(a.x(), b.x(), c.x()));
     int yMin = floor(min(a.y(), b.y(), c.y()));
     int xMax =  ceil(max(a.x(), b.x(), c.x()));
