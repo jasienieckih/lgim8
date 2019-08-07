@@ -91,8 +91,6 @@ private:
 
     // task-specific methods
     void updateProjection();
-    void drawLine(int x0, int y0, int x1, int y1);
-    void drawLine(Point p0, Point p1);
     void drawTriangle(Point a, Point b, Point c);
     bool areCoordsValid(int x, int y);
     int bitsCoordFromXy(int x, int y);
