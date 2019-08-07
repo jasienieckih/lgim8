@@ -26,6 +26,12 @@ double Point::z() const
     return value_z;
 }
 
+double Point::coord(int index) const
+{
+    if (index == 0) return value_x;
+    return value_y;
+}
+
 void Point::set(double x, double y, double z)
 {
     value_x = x;

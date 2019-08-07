@@ -95,6 +95,7 @@ private:
     void drawLine(Point p0, Point p1);
     void drawTriangle(Point a, Point b, Point c);
     bool areCoordsValid(int x, int y);
+    int bitsCoordFromXy(int x, int y);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
