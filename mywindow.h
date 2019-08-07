@@ -31,6 +31,7 @@
 #include "matrix.h"
 #include "point.h"
 #include "polygon.h"
+#include "texture.h"
 
 namespace Ui {
     class MyWindow;
@@ -88,12 +89,14 @@ private:
     Matrix shearingYMatrix;
     Matrix shearingZMatrix;
     bool scalingTogether;
+    Texture brickTexture;
 
     // task-specific methods
     void updateProjection();
     void drawTriangle(Point a, Point b, Point c);
     bool areCoordsValid(int x, int y);
     int bitsCoordFromXy(int x, int y);
+    int bitsCoordFromXy(int x, int y, int width);
 private slots:
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,

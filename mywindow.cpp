@@ -14,7 +14,8 @@
 MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
-    scalingTogether(false)
+    scalingTogether(false),
+    brickTexture(":res/brick_wall_texture300.png")
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -114,6 +115,11 @@ int MyWindow::bitsCoordFromXy(int x, int y)
     return 4 * (img_width * y + x);
 }
 
+int MyWindow::bitsCoordFromXy(int x, int y, int width)
+{
+    return 4 * (width * y + x);
+}
+
 void MyWindow::drawTriangle(Point a, Point b, Point c)
 {
     uchar* outputBits = img->bits();
@@ -144,10 +150,48 @@ void MyWindow::drawTriangle(Point a, Point b, Point c)
             double u = 1 - v - w;
             if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
             {
-                int outputBitsCoord = bitsCoordFromXy(x, y);
-                for (int component = 0; component < 3; ++component)
+                Point ia = brickTexture.point(0);
+                Point ib = brickTexture.point(1);
+                Point ic = brickTexture.point(2);
+
+                Point inputCoords = ia * u + ib * v + ic * w;
+                int floorX = floor(inputCoords.x());
+                int floorY = floor(inputCoords.y());
+                if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                        and areCoordsValid(x,               y              ))
                 {
-                    outputBits[outputBitsCoord + component] = color[component];
+                    // bilinear interpolation of color
+
+                    int bitsCoords[2][2];
+                    bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , 300);
+                    bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , 300);
+                    bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, 300);
+                    bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, 300);
+
+                    const uchar* inputBits = brickTexture.bits();
+
+                    int outputBitsCoords = bitsCoordFromXy(x, y);
+
+                    for (int component = 0; component < 3; ++component)
+                    {
+                        double neighbours[2][2];
+                        for (int i = 0; i < 2; ++i)
+                        {
+                            for (int j = 0; j < 2; ++j)
+                            {
+                                neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
+                            }
+                        }
+                        double interpolated[2];
+                        double factor = inputCoords.x() - floor(inputCoords.x());
+                        for (int i = 0; i < 2; ++i)
+                        {
+                            interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                        }
+                        factor = inputCoords.y() - floor(inputCoords.y());
+                        double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+                        outputBits[outputBitsCoords + component] = round(finalInterpolated);
+                    }
                 }
             }
         }

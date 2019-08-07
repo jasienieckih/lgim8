@@ -16,13 +16,18 @@ SOURCES += main.cpp\
         mywindow.cpp \
     point.cpp \
     matrix.cpp \
-    polygon.cpp
+    polygon.cpp \
+    texture.cpp
 
 HEADERS  += mywindow.h \
     point.h \
     matrix.h \
-    polygon.h
+    polygon.h \
+    texture.h
 
 FORMS    += mywindow.ui
 
 QMAKE_CXXFLAGS += -std=c++11
+
+RESOURCES += \
+    resources.qrc
