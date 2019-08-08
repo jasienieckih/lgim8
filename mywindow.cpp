@@ -17,16 +17,16 @@ MyWindow::MyWindow(QWidget *parent) :
     scalingTogether(false),
     deepBlueTrianglesTexture(":res/deep_blue_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.1, 0.15, 0.6, 1000),
+                         0.6, 0.15, 0.6, 1000),
     redTrianglesTexture(":res/red_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.1, 0.15, 0.6, 1000),
+                         0.6, 0.15  , 0.6, 1000),
     emeraldTrianglesTexture(":res/emerald_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.1, 0.15, 0.6, 1000),
+                         0.6, 0.15, 0.6, 1000),
     purpleTrianglesTexture(":res/purple_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.1, 0.15, 0.6, 1000),
+                         0.6, 0.15, 0.6, 1000),
     background(":res/nebula_background.png")
 
 {
@@ -243,9 +243,9 @@ void MyWindow::updateProjection()
                                 and areCoordsValid(x, y))
                         {
                             // lightning calculation
-                            const double ambientLightning = 0.15;
+                            const double ambientLightning = 1.0;
                             Point lightSourcePosition = Point(0, -0.5, 2.5);
-                            const double lightSourceIntensity = 6.0;
+                            const double lightSourceIntensity = 8.0;
                             const double airClearness = 0.9;
 
                             Point lightVector = lightSourcePosition - reflectionPoint;
