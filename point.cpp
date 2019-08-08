@@ -75,7 +75,25 @@ Point Point::operator+(Point other)
     return Point(value_x + other.value_x, value_y + other.value_y, value_z + other.value_z);
 }
 
+Point Point::operator-(Point other)
+{
+    return Point(value_x - other.value_x, value_y - other.value_y, value_z - other.value_z);
+}
+
 Point Point::operator*(double coefficient)
 {
     return Point(value_x * coefficient, value_y * coefficient, value_z * coefficient);
+}
+
+double Point::operator*(Point other)
+{
+    return value_x * other.value_x + value_y * other.value_y + value_z * other.value_z;
+}
+
+Point Point::operator^(Point other)
+{
+    return Point(
+                value_y * other.value_z - value_z * other.value_y,
+                value_z * other.value_x - value_x * other.value_z,
+                value_x * other.value_y - value_y * other.value_x);
 }

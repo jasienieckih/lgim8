@@ -209,7 +209,28 @@ void MyWindow::updateProjection()
                                 and areCoordsValid(x,               y              ))
                         {
                             // lightning calculation
-                            double lightningCoefficient = 0.5;
+                            double ambientLightning = 0.5;
+                            double ambientReflectionCoeff = 0.5;
+                            Point lightSourcePosition = Point(0, -1.0, 2.5);
+                            double lightSourceIntensity = 1.1;
+                            double airClearness = 0.1;
+                            double dispersedReflectionCoeff = 0.6;
+                            double directReflectionCoeff = 0.75;
+                            double surfaceSmoothnessCoefficient = 2;
+
+                            // move this to polygon-wise
+                            Point normalVector = (originalPoints[1] - originalPoints[0])
+                                               ^ (originalPoints[2] - originalPoints[0]);
+
+                            double lightNormalAngle = 0.5;
+                            double lightEyeAngle = 0.5;
+
+                            double lightningCoefficient = ambientLightning * ambientReflectionCoeff
+                                    + lightSourceIntensity * airClearness
+                                    * (  directReflectionCoeff    * cos(lightNormalAngle)
+                                       + dispersedReflectionCoeff * pow(cos(lightEyeAngle), surfaceSmoothnessCoefficient));
+                            // now we only need to really calculate the angles on a per-point basis
+                            //      and then adjust the coefficient and perhaps move them away from here
 
                             // bilinear interpolation of color
 
