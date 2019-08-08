@@ -179,6 +179,11 @@ void MyWindow::updateProjection()
             originalPoints[i] = polygon->point(i);
             originalPoints[i] = finalMatrix * originalPoints[i];
         }
+
+        Point normalVector = (originalPoints[1] - originalPoints[0])
+                           ^ (originalPoints[2] - originalPoints[0]);
+        normalVector = normalVector / normalVector.norm();
+
         Point projectedPoints[3];
         for (int i = 0; i < 3; ++i)
         {
@@ -187,10 +192,6 @@ void MyWindow::updateProjection()
             projectedPoints[i].setZ(1.0);
             projectedPoints[i] = projectionMatrix * projectedPoints[i];
         }
-
-        Point normalVector = (originalPoints[1] - originalPoints[0])
-                           ^ (originalPoints[2] - originalPoints[0]);
-        normalVector = normalVector / normalVector.norm();
 
         int xMin = floor(min(projectedPoints[0].x(), projectedPoints[1].x(), projectedPoints[2].x()));
         int yMin = floor(min(projectedPoints[0].y(), projectedPoints[1].y(), projectedPoints[2].y()));
@@ -222,80 +223,86 @@ void MyWindow::updateProjection()
                                           + originalPoints[2] * w;
                     double reflectionPointToIrisDistance = reflectionPoint.distanceFrom(irisPoint);
 
-                    if (reflectionPointToIrisDistance < zBuffer[x][y])
+                    if (reflectionPointToIrisDistance < zBuffer[x][y]
+                            and not (u < 0.0 or u > 1.0
+                                     or v < 0.0 or v > 1.0
+                                     or w < 0.0 or w > 1.0))
                     {
-                        if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
+                        const Texture *texture = polygon->texture();
+
+                        Point ia = texture->point(0);
+                        Point ib = texture->point(1);
+                        Point ic = texture->point(2);
+
+                        const uchar* inputBits = texture->bits();
+
+                        Point inputCoords = ia * u + ib * v + ic * w;
+                        int width = texture->width();
+                        int height = texture->height();
+                        if (areCoordsValid(inputCoords.x(), inputCoords.y(), width, height)
+                                and areCoordsValid(x, y))
                         {
-                            const Texture *texture = polygon->texture();
+                            // lightning calculation
+                            const double ambientLightning = 0.15;
+                            Point lightSourcePosition = Point(0, -0.5, 2.5);
+                            const double lightSourceIntensity = 6.0;
+                            const double airClearness = 0.9;
 
-                            Point ia = texture->point(0);
-                            Point ib = texture->point(1);
-                            Point ic = texture->point(2);
+                            Point lightVector = lightSourcePosition - reflectionPoint;
+                            lightVector = lightVector / lightVector.norm();
+                            double lightNormalAngleCosine = normalVector * lightVector;
 
-                            Point inputCoords = ia * u + ib * v + ic * w;
+                            Point irisVector = irisPoint - reflectionPoint;
+                            irisVector = irisVector / irisVector.norm();
+                            double lightEyeAngleCosine = irisVector * lightVector;
+
+                            double lightSourceCoeff = lightSourceIntensity * airClearness;
+                            double lightningCoefficient = 0.0;
+                            lightningCoefficient += texture->dispersedReflectionCoeff() * lightNormalAngleCosine;
+                            if (lightEyeAngleCosine < 0.001)
+                                lightningCoefficient += texture->directReflectionCoeff() * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff());
+                            lightningCoefficient *= lightSourceCoeff;
+                            lightningCoefficient += ambientLightning * texture->ambientReflectionCoeff();
+
+                            // bilinear interpolation of color
+
+                            int bitsCoords[2][2];
                             int floorX = floor(inputCoords.x());
                             int floorY = floor(inputCoords.y());
-                            if (        areCoordsValid(inputCoords.x(), inputCoords.y(), texture->width(), texture->height())
-                                    and areCoordsValid(x,               y              ))
+                            bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , width);
+                            bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , width);
+                            bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, width);
+                            bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, width);
+
+                            int outputBitsCoords = bitsCoordFromXy(x, y);
+
+                            for (int component = 0; component < 3; ++component)
                             {
-                                // lightning calculation
-                                const double ambientLightning = 0.15;
-                                Point lightSourcePosition = Point(0, -0.5, 2.5);
-                                double lightSourceIntensity = 6.0;
-                                double airClearness = 0.9;
-
-                                Point lightVector = lightSourcePosition - reflectionPoint;
-                                lightVector = lightVector / lightVector.norm();
-                                double lightNormalAngleCosine = normalVector * lightVector;
-
-                                Point irisVector = irisPoint - reflectionPoint;
-                                irisVector = irisVector / irisVector.norm();
-                                double lightEyeAngleCosine = irisVector * lightVector;
-
-                                double lightningCoefficient = ambientLightning * texture->ambientReflectionCoeff()
-                                        + lightSourceIntensity * airClearness
-                                        * (  texture->dispersedReflectionCoeff() * lightNormalAngleCosine
-                                           + texture->directReflectionCoeff()    * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff()));
-
-                                // bilinear interpolation of color
-
-                                int bitsCoords[2][2];
-                                int width = texture->width();
-                                bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , width);
-                                bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , width);
-                                bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, width);
-                                bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, width);
-
-                                const uchar* inputBits = texture->bits();
-
-                                int outputBitsCoords = bitsCoordFromXy(x, y);
-
-                                for (int component = 0; component < 3; ++component)
+                                double neighbours[2][2];
+                                for (int i = 0; i < 2; ++i)
                                 {
-                                    double neighbours[2][2];
-                                    for (int i = 0; i < 2; ++i)
+                                    for (int j = 0; j < 2; ++j)
                                     {
-                                        for (int j = 0; j < 2; ++j)
-                                        {
-                                            neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
-                                        }
+                                        neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
                                     }
-                                    double interpolated[2];
-                                    double factor = inputCoords.x() - floor(inputCoords.x());
-                                    for (int i = 0; i < 2; ++i)
-                                    {
-                                        interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
-                                    }
-                                    factor = inputCoords.y() - floor(inputCoords.y());
-                                    double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
-                                    double finalColor = lightningCoefficient * finalInterpolated;
-                                    int integerColor = round(finalColor);
-                                    if (integerColor > 0xff)
-                                        integerColor = 0xff;
-                                    outputBits[outputBitsCoords + component] = integerColor;
                                 }
-                                zBuffer[x][y] = reflectionPointToIrisDistance;
+                                double interpolated[2];
+                                double factor = inputCoords.x() - floor(inputCoords.x());
+                                for (int i = 0; i < 2; ++i)
+                                {
+                                    interpolated[i] = (1 - factor) * neighbours[i][0] + factor * neighbours[i][1];
+                                }
+                                factor = inputCoords.y() - floor(inputCoords.y());
+                                double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+
+                                // applying lightning
+                                double finalColor = lightningCoefficient * finalInterpolated;
+                                int integerColor = round(finalColor);
+                                if (integerColor > 0xff)
+                                    integerColor = 0xff;
+                                outputBits[outputBitsCoords + component] = integerColor;
                             }
+                            zBuffer[x][y] = reflectionPointToIrisDistance;
                         }
                     }
                 }
