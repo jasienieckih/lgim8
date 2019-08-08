@@ -31,7 +31,8 @@ MyWindow::MyWindow(QWidget *parent) :
                          0.1, 0.2, 0.4, 200),
     purpleTrianglesTexture(":res/purple_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.1, 0.2, 0.4, 200)
+                         0.1, 0.2, 0.4, 200),
+    background(":res/nebula_background.png")
 
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
@@ -358,26 +359,22 @@ void MyWindow::on_draw2Button_clicked()
     update();
 }
 
-// Function cleaning the image (painting it in all white)
 void MyWindow::img_clean()
 {
-    unsigned char *ptr;
+    unsigned char *ptr, *sourcePtr;
 
-    // 'bits()' returns a pointer to the first pixel of the image
     ptr = img->bits();
+    sourcePtr = background.bits();
 
-    int i,j;
-
-    // i - current row, it changes from 0 to img_height-1
-    for(i=0; i<img_height; i++)
+    for(int x = 0; x < img_height; x++)
     {
-        // j - current column, it changes from 0 to img_width
-        // each row has img_width pixels and 4 * img_width bytes (1 pixel = 4 bytes)
-        for(j=0; j<img_width; j++)
+        for(int y = 0; y < img_width; y++)
         {
-            ptr[img_width*4*i + 4*j    ] = 0x00; // BLUE component
-            ptr[img_width*4*i + 4*j + 1] = 0x00; // GREEN component
-            ptr[img_width*4*i + 4*j + 2] = 0x00; // RED component
+            int coords = bitsCoordFromXy(x, y);
+            for (int component = 0; component < 3; ++component)
+            {
+                ptr[coords + component] = sourcePtr[coords + component];
+            }
         }
     }
 }

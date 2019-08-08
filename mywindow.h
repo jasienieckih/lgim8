@@ -95,6 +95,7 @@ private:
     Texture redTrianglesTexture;
     Texture emeraldTrianglesTexture;
     Texture purpleTrianglesTexture;
+    QImage background;
 
     // task-specific methods
     void updateProjection();
