@@ -91,6 +91,10 @@ private:
     bool scalingTogether;
     Texture bluePlasticTexture;
     Texture blueTrianglesTexture;
+    Texture deepBlueTrianglesTexture;
+    Texture redTrianglesTexture;
+    Texture emeraldTrianglesTexture;
+    Texture purpleTrianglesTexture;
 
     // task-specific methods
     void updateProjection();

@@ -16,10 +16,23 @@ MyWindow::MyWindow(QWidget *parent) :
     ui(new Ui::MyWindow),
     scalingTogether(false),
     bluePlasticTexture(":res/blue_plastic.png",
-                 0.5, 0.9, 0.9, 60),
+                 0.5, 0.1, 0.1, 60),
     blueTrianglesTexture(":res/blue_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.5, 0.9, 4.0, 120)
+                         0.1, 0.2, 0.4, 200),
+    deepBlueTrianglesTexture(":res/deep_blue_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.1, 0.2, 0.4, 200),
+    redTrianglesTexture(":res/red_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.1, 0.2, 0.4, 200),
+    emeraldTrianglesTexture(":res/emerald_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.1, 0.2, 0.4, 200),
+    purpleTrianglesTexture(":res/purple_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.1, 0.2, 0.4, 200)
+
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -43,10 +56,10 @@ MyWindow::MyWindow(QWidget *parent) :
     points.emplace_back(Point( 0.459279327,  0.306186218, -0.2651650430));
     points.emplace_back(Point(-0.459279327,  0.306186218, -0.2651650430));
 
-    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2], &bluePlasticTexture));
-    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1], &bluePlasticTexture));
-    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &bluePlasticTexture));
-    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &blueTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2], &deepBlueTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1], &emeraldTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &purpleTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &redTrianglesTexture));
 
     updateProjection();
 }
@@ -227,7 +240,7 @@ void MyWindow::updateProjection()
                             // lightning calculation
                             const double ambientLightning = 0.15;
                             Point lightSourcePosition = Point(0, -0.5, 2.5);
-                            double lightSourceIntensity = 0.75;
+                            double lightSourceIntensity = 6.0;
                             double airClearness = 0.9;
 
                             Point reflectionPoint = originalPoints[0] * u
