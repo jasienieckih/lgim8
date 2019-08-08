@@ -89,11 +89,13 @@ private:
     Matrix shearingYMatrix;
     Matrix shearingZMatrix;
     bool scalingTogether;
-    Texture brickTexture;
+    Texture bluePlasticTexture;
+    Texture blueTrianglesTexture;
 
     // task-specific methods
     void updateProjection();
     bool areCoordsValid(int x, int y);
+    bool areCoordsValid(int x, int y, int width, int height);
     int bitsCoordFromXy(int x, int y);
     int bitsCoordFromXy(int x, int y, int width);
 private slots:

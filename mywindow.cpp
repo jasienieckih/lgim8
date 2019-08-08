@@ -15,7 +15,11 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     scalingTogether(false),
-    brickTexture(":res/blue_plastic.png", 0.5, 0.9, 0.9, 60)
+    bluePlasticTexture(":res/blue_plastic.png",
+                 0.5, 0.9, 0.9, 60),
+    blueTrianglesTexture(":res/blue_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.5, 0.9, 4.0, 120)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -39,10 +43,10 @@ MyWindow::MyWindow(QWidget *parent) :
     points.emplace_back(Point( 0.459279327,  0.306186218, -0.2651650430));
     points.emplace_back(Point(-0.459279327,  0.306186218, -0.2651650430));
 
-    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2], &brickTexture));
-    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1], &brickTexture));
-    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &brickTexture));
-    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &brickTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2], &bluePlasticTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1], &bluePlasticTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &bluePlasticTexture));
+    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &blueTrianglesTexture));
 
     updateProjection();
 }
@@ -56,6 +60,11 @@ MyWindow::~MyWindow()
 bool MyWindow::areCoordsValid(int x, int y)
 {
     return x >= 0 and x < img_width and y >= 0 and y < img_height;
+}
+
+bool MyWindow::areCoordsValid(int x, int y, int width, int height)
+{
+    return x >= 0 and x < width and y >= 0 and y < height;
 }
 
 double min(double a, double b, double c)
@@ -212,7 +221,7 @@ void MyWindow::updateProjection()
                         Point inputCoords = ia * u + ib * v + ic * w;
                         int floorX = floor(inputCoords.x());
                         int floorY = floor(inputCoords.y());
-                        if (        areCoordsValid(inputCoords.x(), inputCoords.y())
+                        if (        areCoordsValid(inputCoords.x(), inputCoords.y(), texture->width(), texture->height())
                                 and areCoordsValid(x,               y              ))
                         {
                             // lightning calculation
@@ -240,12 +249,13 @@ void MyWindow::updateProjection()
                             // bilinear interpolation of color
 
                             int bitsCoords[2][2];
-                            bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , 300);
-                            bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , 300);
-                            bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, 300);
-                            bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, 300);
+                            int width = texture->width();
+                            bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , width);
+                            bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , width);
+                            bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, width);
+                            bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, width);
 
-                            const uchar* inputBits = brickTexture.bits();
+                            const uchar* inputBits = texture->bits();
 
                             int outputBitsCoords = bitsCoordFromXy(x, y);
 

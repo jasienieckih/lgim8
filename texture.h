@@ -9,11 +9,19 @@ class Texture
 {
 public:
     Texture(QString path,
+            Point a, Point b, Point c,
+            double ambientReflectionCoeff,
+            double dispersedReflectionCoeff,
+            double directReflectionCoeff,
+            int surfaceSmoothnessCoeff);
+    Texture(QString path,
             double ambientReflectionCoeff,
             double dispersedReflectionCoeff,
             double directReflectionCoeff,
             int surfaceSmoothnessCoeff);
     const uchar* bits() const;
+    int width() const;
+    int height() const;
     const Point& point(int index) const;
     double ambientReflectionCoeff() const;
     double dispersedReflectionCoeff() const;
