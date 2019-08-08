@@ -263,6 +263,8 @@ void MyWindow::updateProjection()
                                 lightningCoefficient += texture->directReflectionCoeff() * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff());
                             lightningCoefficient *= lightSourceCoeff;
                             lightningCoefficient += ambientLightning * texture->ambientReflectionCoeff();
+                            if (lightningCoefficient < 0.0)
+                                lightningCoefficient = 0.0;
 
                             // bilinear interpolation of color
 
