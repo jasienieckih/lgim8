@@ -246,7 +246,7 @@ void MyWindow::updateProjection()
                             const double ambientLightning = 1.0;
                             Point lightSourcePosition = Point(0, -0.5, 2.5);
                             const double lightSourceIntensity = 8.0;
-                            const double airClearness = 0.9;
+                            double airClearness = 0.9;
 
                             Point lightVector = lightSourcePosition - reflectionPoint;
                             lightVector = lightVector / lightVector.norm();
@@ -256,13 +256,24 @@ void MyWindow::updateProjection()
                             irisVector = irisVector / irisVector.norm();
                             double lightEyeAngleCosine = irisVector * lightVector;
 
+                            double ambientReflectionCoeff = texture->ambientReflectionCoeff();
+                            double dispersedReflectionCoeff = texture->dispersedReflectionCoeff();
+                            double directReflectionCoeff = texture->directReflectionCoeff();
+                            if (ui->customLightCheckBox->isChecked())
+                            {
+                                ambientReflectionCoeff *= ui->ambientReflectionSlider->value() / 1000.0;
+                                airClearness *= ui->airClearnessSlider->value() / 1000.0;
+                                dispersedReflectionCoeff *= ui->dispersedReflectionSlider->value() / 1000.0;
+                                directReflectionCoeff *= ui->directReflectionSlider->value() / 1000.0;
+                            }
+
                             double lightSourceCoeff = lightSourceIntensity * airClearness;
                             double lightningCoefficient = 0.0;
-                            lightningCoefficient += texture->dispersedReflectionCoeff() * lightNormalAngleCosine;
+                            lightningCoefficient += dispersedReflectionCoeff * lightNormalAngleCosine;
                             if (lightEyeAngleCosine < 0.001)
-                                lightningCoefficient += texture->directReflectionCoeff() * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff());
+                                lightningCoefficient += directReflectionCoeff * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff());
                             lightningCoefficient *= lightSourceCoeff;
-                            lightningCoefficient += ambientLightning * texture->ambientReflectionCoeff();
+                            lightningCoefficient += ambientLightning * ambientReflectionCoeff;
                             if (lightningCoefficient < 0.0)
                                 lightningCoefficient = 0.0;
 
@@ -520,10 +531,43 @@ void MyWindow::on_resetButton_clicked()
     ui->shearingXSlider->setValue(1000);
     ui->shearingYSlider->setValue(1000);
     ui->shearingZSlider->setValue(1000);
+    ui->ambientReflectionSlider->setValue(1000);
+    ui->airClearnessSlider->setValue(1000);
+    ui->dispersedReflectionSlider->setValue(1000);
+    ui->directReflectionSlider->setValue(1000);
     updateProjection();
 }
 
 void MyWindow::on_scalingTogetherBox_toggled(bool checked)
 {
     scalingTogether = checked;
+}
+
+void MyWindow::on_ambientReflectionSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_airClearnessSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_dispersedReflectionSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_directReflectionSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_customLightCheckBox_clicked()
+{
+    updateProjection();
 }
