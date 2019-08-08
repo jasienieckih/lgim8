@@ -89,8 +89,6 @@ private:
     Matrix shearingYMatrix;
     Matrix shearingZMatrix;
     bool scalingTogether;
-    Texture bluePlasticTexture;
-    Texture blueTrianglesTexture;
     Texture deepBlueTrianglesTexture;
     Texture redTrianglesTexture;
     Texture emeraldTrianglesTexture;
