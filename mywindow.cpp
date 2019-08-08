@@ -15,7 +15,7 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     scalingTogether(false),
-    brickTexture(":res/blue_plastic.png")
+    brickTexture(":res/blue_plastic.png", 0.5, 0.9, 0.9, 60)
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -39,10 +39,10 @@ MyWindow::MyWindow(QWidget *parent) :
     points.emplace_back(Point( 0.459279327,  0.306186218, -0.2651650430));
     points.emplace_back(Point(-0.459279327,  0.306186218, -0.2651650430));
 
-    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2]));
-    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1]));
-    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3]));
-    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2]));
+    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2], &brickTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1], &brickTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &brickTexture));
+    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &brickTexture));
 
     updateProjection();
 }
@@ -203,9 +203,11 @@ void MyWindow::updateProjection()
                     double u = 1 - v - w;
                     if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
                     {
-                        Point ia = brickTexture.point(0);
-                        Point ib = brickTexture.point(1);
-                        Point ic = brickTexture.point(2);
+                        const Texture *texture = polygon->texture();
+
+                        Point ia = texture->point(0);
+                        Point ib = texture->point(1);
+                        Point ic = texture->point(2);
 
                         Point inputCoords = ia * u + ib * v + ic * w;
                         int floorX = floor(inputCoords.x());
@@ -214,14 +216,10 @@ void MyWindow::updateProjection()
                                 and areCoordsValid(x,               y              ))
                         {
                             // lightning calculation
-                            double ambientLightning = 0.15;
-                            double ambientReflectionCoeff = 0.5;
+                            const double ambientLightning = 0.15;
                             Point lightSourcePosition = Point(0, -0.5, 2.5);
                             double lightSourceIntensity = 0.75;
                             double airClearness = 0.9;
-                            double dispersedReflectionCoeff = 0.9;
-                            double directReflectionCoeff = 0.9;
-                            double surfaceSmoothnessCoefficient = 60;
 
                             Point reflectionPoint = originalPoints[0] * u
                                                   + originalPoints[1] * v
@@ -234,10 +232,10 @@ void MyWindow::updateProjection()
                             irisVector = irisVector / irisVector.norm();
                             double lightEyeAngleCosine = irisVector * lightVector;
 
-                            double lightningCoefficient = ambientLightning * ambientReflectionCoeff
+                            double lightningCoefficient = ambientLightning * texture->ambientReflectionCoeff()
                                     + lightSourceIntensity * airClearness
-                                    * (  dispersedReflectionCoeff * lightNormalAngleCosine
-                                       + directReflectionCoeff    * pow(lightEyeAngleCosine, surfaceSmoothnessCoefficient));
+                                    * (  texture->dispersedReflectionCoeff() * lightNormalAngleCosine
+                                       + texture->directReflectionCoeff()    * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff()));
 
                             // bilinear interpolation of color
 

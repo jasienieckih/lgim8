@@ -1,8 +1,16 @@
 #include "texture.h"
 
-Texture::Texture(QString path)
+Texture::Texture(QString path,
+                 double ambientReflectionCoeff,
+                 double dispersedReflectionCoeff,
+                 double directReflectionCoeff,
+                 int surfaceSmoothnessCoeff)
     :
-      image(path)
+      image(path),
+      ambientReflectionCoeffValue(ambientReflectionCoeff),
+      dispersedReflectionCoeffValue(dispersedReflectionCoeff),
+      directReflectionCoeffValue(directReflectionCoeff),
+      surfaceSmoothnessCoeffValue(surfaceSmoothnessCoeff)
 {
     double width = image.width();
     double height = image.height();
@@ -19,5 +27,25 @@ const uchar *Texture::bits() const
 const Point &Texture::point(int index) const
 {
     return points[index];
+}
+
+double Texture::ambientReflectionCoeff() const
+{
+    return ambientReflectionCoeffValue;
+}
+
+double Texture::dispersedReflectionCoeff() const
+{
+    return dispersedReflectionCoeffValue;
+}
+
+double Texture::directReflectionCoeff() const
+{
+    return directReflectionCoeffValue;
+}
+
+int Texture::surfaceSmoothnessCoeff() const
+{
+    return surfaceSmoothnessCoeffValue;
 }
 
