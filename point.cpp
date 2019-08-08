@@ -70,12 +70,40 @@ Point Point::getRounded() const
     return ret;
 }
 
-Point Point::operator+(Point other)
+double Point::norm() const
+{
+    return distanceFrom(Point(0.0, 0.0, 0.0));
+}
+
+Point Point::operator+(Point other) const
 {
     return Point(value_x + other.value_x, value_y + other.value_y, value_z + other.value_z);
 }
 
-Point Point::operator*(double coefficient)
+Point Point::operator-(Point other) const
+{
+    return Point(value_x - other.value_x, value_y - other.value_y, value_z - other.value_z);
+}
+
+Point Point::operator*(double coefficient) const
 {
     return Point(value_x * coefficient, value_y * coefficient, value_z * coefficient);
+}
+
+Point Point::operator/(double coefficient) const
+{
+    return Point(value_x / coefficient, value_y / coefficient, value_z / coefficient);
+}
+
+double Point::operator*(Point other) const
+{
+    return value_x * other.value_x + value_y * other.value_y + value_z * other.value_z;
+}
+
+Point Point::operator^(Point other) const
+{
+    return Point(
+                value_y * other.value_z - value_z * other.value_y,
+                value_z * other.value_x - value_x * other.value_z,
+                value_x * other.value_y - value_y * other.value_x);
 }

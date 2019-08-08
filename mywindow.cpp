@@ -40,9 +40,9 @@ MyWindow::MyWindow(QWidget *parent) :
     points.emplace_back(Point(-0.459279327,  0.306186218, -0.2651650430));
 
     polygons.emplace_back(Polygon(&points[0], &points[1], &points[2]));
-    polygons.emplace_back(Polygon(&points[0], &points[1], &points[3]));
+    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1]));
     polygons.emplace_back(Polygon(&points[0], &points[2], &points[3]));
-    polygons.emplace_back(Polygon(&points[1], &points[2], &points[3]));
+    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2]));
 
     updateProjection();
 }
@@ -142,6 +142,7 @@ void MyWindow::updateProjection()
     projectionMatrix.set(2, 3, 300.0);
 
     double distance = 5.0;
+    Point irisPoint = Point(0.0, 0.0, -distance);
 
     Matrix finalMatrix;
     finalMatrix = finalMatrix * translationMatrix;
@@ -170,7 +171,11 @@ void MyWindow::updateProjection()
         }
 
         Point centroid = (originalPoints[0] + originalPoints[1] + originalPoints[2]) * 0.333333333;
-        double centroidToIrisDistance = centroid.distanceFrom(Point(0.0, 0.0, -distance));
+        double centroidToIrisDistance = centroid.distanceFrom(irisPoint);
+
+        Point normalVector = (originalPoints[1] - originalPoints[0])
+                           ^ (originalPoints[2] - originalPoints[0]);
+        normalVector = normalVector / normalVector.norm();
 
         int xMin = floor(min(projectedPoints[0].x(), projectedPoints[1].x(), projectedPoints[2].x()));
         int yMin = floor(min(projectedPoints[0].y(), projectedPoints[1].y(), projectedPoints[2].y()));
@@ -209,7 +214,30 @@ void MyWindow::updateProjection()
                                 and areCoordsValid(x,               y              ))
                         {
                             // lightning calculation
-                            double lightningCoefficient = 0.5;
+                            double ambientLightning = 0.15;
+                            double ambientReflectionCoeff = 0.5;
+                            Point lightSourcePosition = Point(0, -0.5, 2.5);
+                            double lightSourceIntensity = 0.75;
+                            double airClearness = 0.9;
+                            double dispersedReflectionCoeff = 0.9;
+                            double directReflectionCoeff = 0.9;
+                            double surfaceSmoothnessCoefficient = 60;
+
+                            Point reflectionPoint = originalPoints[0] * u
+                                                  + originalPoints[1] * v
+                                                  + originalPoints[2] * w;
+                            Point lightVector = lightSourcePosition - reflectionPoint;
+                            lightVector = lightVector / lightVector.norm();
+                            double lightNormalAngleCosine = normalVector * lightVector;
+
+                            Point irisVector = irisPoint - reflectionPoint;
+                            irisVector = irisVector / irisVector.norm();
+                            double lightEyeAngleCosine = irisVector * lightVector;
+
+                            double lightningCoefficient = ambientLightning * ambientReflectionCoeff
+                                    + lightSourceIntensity * airClearness
+                                    * (  dispersedReflectionCoeff * lightNormalAngleCosine
+                                       + directReflectionCoeff    * pow(lightEyeAngleCosine, surfaceSmoothnessCoefficient));
 
                             // bilinear interpolation of color
 
@@ -242,7 +270,10 @@ void MyWindow::updateProjection()
                                 factor = inputCoords.y() - floor(inputCoords.y());
                                 double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
                                 double finalColor = lightningCoefficient * finalInterpolated;
-                                outputBits[outputBitsCoords + component] = round(finalColor);
+                                int integerColor = round(finalColor);
+                                if (integerColor > 0xff)
+                                    integerColor = 0xff;
+                                outputBits[outputBitsCoords + component] = integerColor;
                             }
                             zBuffer[x][y] = centroidToIrisDistance;
                         }
