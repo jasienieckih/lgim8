@@ -89,11 +89,16 @@ private:
     Matrix shearingYMatrix;
     Matrix shearingZMatrix;
     bool scalingTogether;
-    Texture brickTexture;
+    Texture deepBlueTrianglesTexture;
+    Texture redTrianglesTexture;
+    Texture emeraldTrianglesTexture;
+    Texture purpleTrianglesTexture;
+    QImage background;
 
     // task-specific methods
     void updateProjection();
     bool areCoordsValid(int x, int y);
+    bool areCoordsValid(int x, int y, int width, int height);
     int bitsCoordFromXy(int x, int y);
     int bitsCoordFromXy(int x, int y, int width);
 private slots:
@@ -120,6 +125,11 @@ private slots:
     void on_shearingZSlider_valueChanged(int value);
     void on_resetButton_clicked();
     void on_scalingTogetherBox_toggled(bool checked);
+    void on_ambientReflectionSlider_valueChanged(int value);
+    void on_airClearnessSlider_valueChanged(int value);
+    void on_dispersedReflectionSlider_valueChanged(int value);
+    void on_directReflectionSlider_valueChanged(int value);
+    void on_customLightCheckBox_clicked();
 };
 
 #endif // MYWINDOW_H

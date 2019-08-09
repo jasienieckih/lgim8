@@ -1,6 +1,8 @@
 #include "polygon.h"
 
-Polygon::Polygon(Point* a, Point* b, Point* c)
+Polygon::Polygon(Point *a, Point *b, Point *c, const Texture *texture)
+    :
+      textureValue(texture)
 {
     points[0] = a;
     points[1] = b;
@@ -10,6 +12,11 @@ Polygon::Polygon(Point* a, Point* b, Point* c)
 Point Polygon::point(int index) const
 {
     return *points[index];
+}
+
+const Texture *Polygon::texture() const
+{
+    return textureValue;
 }
 
 void Polygon::setPoint(int index, Point value)

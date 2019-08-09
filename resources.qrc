@@ -3,5 +3,12 @@
         <file>res/gold_brick2.png</file>
         <file>res/gold_brick.png</file>
         <file>res/blue_plastic.png</file>
+        <file>res/blue_triangles.png</file>
+        <file>res/blue_triangles_glass_tiled.png</file>
+        <file>res/deep_blue_triangles.png</file>
+        <file>res/emerald_triangles.png</file>
+        <file>res/purple_triangles.png</file>
+        <file>res/red_triangles.png</file>
+        <file>res/nebula_background.png</file>
     </qresource>
 </RCC>

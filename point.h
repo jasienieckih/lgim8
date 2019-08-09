@@ -20,11 +20,13 @@ public:
     void setY(double y);
     void setZ(double z);
     Point getRounded() const;
-    Point operator+(Point other);
-    Point operator-(Point other);
-    Point operator*(double coefficient);
-    double operator*(Point other); // dot product
-    Point operator^(Point other); // cross product
+    double norm() const;
+    Point operator+(Point other) const;
+    Point operator-(Point other) const;
+    Point operator*(double coefficient) const;
+    Point operator/(double coefficient) const;
+    double operator*(Point other) const; // dot product
+    Point operator^(Point other) const; // cross product
 private:
     double value_x, value_y, value_z;
 };

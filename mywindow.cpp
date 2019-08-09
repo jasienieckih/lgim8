@@ -15,7 +15,20 @@ MyWindow::MyWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MyWindow),
     scalingTogether(false),
-    brickTexture(":res/blue_plastic.png")
+    deepBlueTrianglesTexture(":res/deep_blue_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.6, 0.15, 0.6, 1000),
+    redTrianglesTexture(":res/red_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.6, 0.15  , 0.6, 1000),
+    emeraldTrianglesTexture(":res/emerald_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.6, 0.15, 0.6, 1000),
+    purpleTrianglesTexture(":res/purple_triangles.png",
+                         Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
+                         0.6, 0.15, 0.6, 1000),
+    background(":res/nebula_background.png")
+
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
     ui->setupUi(this);
@@ -39,10 +52,10 @@ MyWindow::MyWindow(QWidget *parent) :
     points.emplace_back(Point( 0.459279327,  0.306186218, -0.2651650430));
     points.emplace_back(Point(-0.459279327,  0.306186218, -0.2651650430));
 
-    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2]));
-    polygons.emplace_back(Polygon(&points[0], &points[1], &points[3]));
-    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3]));
-    polygons.emplace_back(Polygon(&points[1], &points[2], &points[3]));
+    polygons.emplace_back(Polygon(&points[0], &points[1], &points[2], &deepBlueTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[3], &points[1], &emeraldTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &purpleTrianglesTexture));
+    polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &redTrianglesTexture));
 
     updateProjection();
 }
@@ -56,6 +69,11 @@ MyWindow::~MyWindow()
 bool MyWindow::areCoordsValid(int x, int y)
 {
     return x >= 0 and x < img_width and y >= 0 and y < img_height;
+}
+
+bool MyWindow::areCoordsValid(int x, int y, int width, int height)
+{
+    return x >= 0 and x < width and y >= 0 and y < height;
 }
 
 double min(double a, double b, double c)
@@ -142,6 +160,7 @@ void MyWindow::updateProjection()
     projectionMatrix.set(2, 3, 300.0);
 
     double distance = 5.0;
+    Point irisPoint = Point(0.0, 0.0, -distance);
 
     Matrix finalMatrix;
     finalMatrix = finalMatrix * translationMatrix;
@@ -160,6 +179,11 @@ void MyWindow::updateProjection()
             originalPoints[i] = polygon->point(i);
             originalPoints[i] = finalMatrix * originalPoints[i];
         }
+
+        Point normalVector = (originalPoints[1] - originalPoints[0])
+                           ^ (originalPoints[2] - originalPoints[0]);
+        normalVector = normalVector / normalVector.norm();
+
         Point projectedPoints[3];
         for (int i = 0; i < 3; ++i)
         {
@@ -168,9 +192,6 @@ void MyWindow::updateProjection()
             projectedPoints[i].setZ(1.0);
             projectedPoints[i] = projectionMatrix * projectedPoints[i];
         }
-
-        Point centroid = (originalPoints[0] + originalPoints[1] + originalPoints[2]) * 0.333333333;
-        double centroidToIrisDistance = centroid.distanceFrom(Point(0.0, 0.0, -distance));
 
         int xMin = floor(min(projectedPoints[0].x(), projectedPoints[1].x(), projectedPoints[2].x()));
         int yMin = floor(min(projectedPoints[0].y(), projectedPoints[1].y(), projectedPoints[2].y()));
@@ -181,7 +202,7 @@ void MyWindow::updateProjection()
         {
             for (int y = yMin; y <= yMax; ++y)
             {
-                if (areCoordsValid(x, y) and zBuffer[x][y] > centroidToIrisDistance)
+                if (areCoordsValid(x, y))
                 {
                     // calculating input coordinates to source from through barycentrics
                     double coeffs[3][2];
@@ -196,51 +217,76 @@ void MyWindow::updateProjection()
                     double v = (coeffs[0][0] * coeffs[1][1] - coeffs[1][0] * coeffs[0][1]) / denominator;
                     double w = (coeffs[2][0] * coeffs[0][1] - coeffs[0][0] * coeffs[2][1]) / denominator;
                     double u = 1 - v - w;
-                    if (not (u < 0.0 or u > 1.0 or v < 0.0 or v > 1.0 or w < 0.0 or w > 1.0))
+
+                    Point reflectionPoint = originalPoints[0] * u
+                                          + originalPoints[1] * v
+                                          + originalPoints[2] * w;
+                    double reflectionPointToIrisDistance = reflectionPoint.distanceFrom(irisPoint);
+
+                    if (reflectionPointToIrisDistance < zBuffer[x][y]
+                            and not (u < 0.0 or u > 1.0
+                                     or v < 0.0 or v > 1.0
+                                     or w < 0.0 or w > 1.0))
                     {
-                        Point ia = brickTexture.point(0);
-                        Point ib = brickTexture.point(1);
-                        Point ic = brickTexture.point(2);
+                        const Texture *texture = polygon->texture();
+
+                        Point ia = texture->point(0);
+                        Point ib = texture->point(1);
+                        Point ic = texture->point(2);
+
+                        const uchar* inputBits = texture->bits();
 
                         Point inputCoords = ia * u + ib * v + ic * w;
-                        int floorX = floor(inputCoords.x());
-                        int floorY = floor(inputCoords.y());
-                        if (        areCoordsValid(inputCoords.x(), inputCoords.y())
-                                and areCoordsValid(x,               y              ))
+                        int width = texture->width();
+                        int height = texture->height();
+                        if (areCoordsValid(inputCoords.x(), inputCoords.y(), width, height)
+                                and areCoordsValid(x, y))
                         {
                             // lightning calculation
-                            double ambientLightning = 0.5;
-                            double ambientReflectionCoeff = 0.5;
-                            Point lightSourcePosition = Point(0, -1.0, 2.5);
-                            double lightSourceIntensity = 1.1;
-                            double airClearness = 0.1;
-                            double dispersedReflectionCoeff = 0.6;
-                            double directReflectionCoeff = 0.75;
-                            double surfaceSmoothnessCoefficient = 2;
 
-                            // move this to polygon-wise
-                            Point normalVector = (originalPoints[1] - originalPoints[0])
-                                               ^ (originalPoints[2] - originalPoints[0]);
+                            const double ambientLightning = 1.0;
+                            Point lightSourcePosition = Point(0, -0.5, 2.5);
+                            const double lightSourceIntensity = 8.0;
+                            double airClearness = 0.9;
 
-                            double lightNormalAngle = 0.5;
-                            double lightEyeAngle = 0.5;
+                            Point lightVector = lightSourcePosition - reflectionPoint;
+                            lightVector = lightVector / lightVector.norm();
+                            double lightNormalAngleCosine = normalVector * lightVector;
 
-                            double lightningCoefficient = ambientLightning * ambientReflectionCoeff
-                                    + lightSourceIntensity * airClearness
-                                    * (  directReflectionCoeff    * cos(lightNormalAngle)
-                                       + dispersedReflectionCoeff * pow(cos(lightEyeAngle), surfaceSmoothnessCoefficient));
-                            // now we only need to really calculate the angles on a per-point basis
-                            //      and then adjust the coefficient and perhaps move them away from here
+                            Point irisVector = irisPoint - reflectionPoint;
+                            irisVector = irisVector / irisVector.norm();
+                            double lightEyeAngleCosine = irisVector * lightVector;
+
+                            double ambientReflectionCoeff = texture->ambientReflectionCoeff();
+                            double dispersedReflectionCoeff = texture->dispersedReflectionCoeff();
+                            double directReflectionCoeff = texture->directReflectionCoeff();
+                            if (ui->customLightCheckBox->isChecked())
+                            {
+                                ambientReflectionCoeff *= ui->ambientReflectionSlider->value() / 1000.0;
+                                airClearness *= ui->airClearnessSlider->value() / 1000.0;
+                                dispersedReflectionCoeff *= ui->dispersedReflectionSlider->value() / 1000.0;
+                                directReflectionCoeff *= ui->directReflectionSlider->value() / 1000.0;
+                            }
+
+                            double lightSourceCoeff = lightSourceIntensity * airClearness;
+                            double lightningCoefficient = 0.0;
+                            lightningCoefficient += dispersedReflectionCoeff * lightNormalAngleCosine;
+                            if (lightEyeAngleCosine < 0.001)
+                                lightningCoefficient += directReflectionCoeff * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff());
+                            lightningCoefficient *= lightSourceCoeff;
+                            lightningCoefficient += ambientLightning * ambientReflectionCoeff;
+                            if (lightningCoefficient < 0.0)
+                                lightningCoefficient = 0.0;
 
                             // bilinear interpolation of color
 
                             int bitsCoords[2][2];
-                            bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , 300);
-                            bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , 300);
-                            bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, 300);
-                            bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, 300);
-
-                            const uchar* inputBits = brickTexture.bits();
+                            int floorX = floor(inputCoords.x());
+                            int floorY = floor(inputCoords.y());
+                            bitsCoords[0][0] = bitsCoordFromXy(floorX,     floorY    , width);
+                            bitsCoords[0][1] = bitsCoordFromXy(floorX + 1, floorY    , width);
+                            bitsCoords[1][0] = bitsCoordFromXy(floorX,     floorY + 1, width);
+                            bitsCoords[1][1] = bitsCoordFromXy(floorX + 1, floorY + 1, width);
 
                             int outputBitsCoords = bitsCoordFromXy(x, y);
 
@@ -262,10 +308,15 @@ void MyWindow::updateProjection()
                                 }
                                 factor = inputCoords.y() - floor(inputCoords.y());
                                 double finalInterpolated = (1 - factor) * interpolated[0] + factor * interpolated[1];
+
+                                // applying lightning
                                 double finalColor = lightningCoefficient * finalInterpolated;
-                                outputBits[outputBitsCoords + component] = round(finalColor);
+                                int integerColor = round(finalColor);
+                                if (integerColor > 0xff)
+                                    integerColor = 0xff;
+                                outputBits[outputBitsCoords + component] = integerColor;
                             }
-                            zBuffer[x][y] = centroidToIrisDistance;
+                            zBuffer[x][y] = reflectionPointToIrisDistance;
                         }
                     }
                 }
@@ -327,26 +378,22 @@ void MyWindow::on_draw2Button_clicked()
     update();
 }
 
-// Function cleaning the image (painting it in all white)
 void MyWindow::img_clean()
 {
-    unsigned char *ptr;
+    unsigned char *ptr, *sourcePtr;
 
-    // 'bits()' returns a pointer to the first pixel of the image
     ptr = img->bits();
+    sourcePtr = background.bits();
 
-    int i,j;
-
-    // i - current row, it changes from 0 to img_height-1
-    for(i=0; i<img_height; i++)
+    for(int x = 0; x < img_height; x++)
     {
-        // j - current column, it changes from 0 to img_width
-        // each row has img_width pixels and 4 * img_width bytes (1 pixel = 4 bytes)
-        for(j=0; j<img_width; j++)
+        for(int y = 0; y < img_width; y++)
         {
-            ptr[img_width*4*i + 4*j    ] = 0x00; // BLUE component
-            ptr[img_width*4*i + 4*j + 1] = 0x00; // GREEN component
-            ptr[img_width*4*i + 4*j + 2] = 0x00; // RED component
+            int coords = bitsCoordFromXy(x, y);
+            for (int component = 0; component < 3; ++component)
+            {
+                ptr[coords + component] = sourcePtr[coords + component];
+            }
         }
     }
 }
@@ -485,10 +532,43 @@ void MyWindow::on_resetButton_clicked()
     ui->shearingXSlider->setValue(1000);
     ui->shearingYSlider->setValue(1000);
     ui->shearingZSlider->setValue(1000);
+    ui->ambientReflectionSlider->setValue(1000);
+    ui->airClearnessSlider->setValue(1000);
+    ui->dispersedReflectionSlider->setValue(1000);
+    ui->directReflectionSlider->setValue(1000);
     updateProjection();
 }
 
 void MyWindow::on_scalingTogetherBox_toggled(bool checked)
 {
     scalingTogether = checked;
+}
+
+void MyWindow::on_ambientReflectionSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_airClearnessSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_dispersedReflectionSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_directReflectionSlider_valueChanged(int value)
+{
+    value = value;
+    updateProjection();
+}
+
+void MyWindow::on_customLightCheckBox_clicked()
+{
+    updateProjection();
 }
