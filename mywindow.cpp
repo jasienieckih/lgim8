@@ -17,16 +17,16 @@ MyWindow::MyWindow(QWidget *parent) :
     scalingTogether(false),
     deepBlueTrianglesTexture(":res/deep_blue_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.6, 0.15, 0.6, 1000),
+                         0.2, 0.15, 0.6, 1000),
     redTrianglesTexture(":res/red_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.6, 0.15  , 0.6, 1000),
+                         0.2, 0.15  , 0.6, 1000),
     emeraldTrianglesTexture(":res/emerald_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.6, 0.15, 0.6, 1000),
+                         0.2, 0.15, 0.6, 1000),
     purpleTrianglesTexture(":res/purple_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
-                         0.6, 0.15, 0.6, 1000),
+                         0.2, 0.15, 0.6, 1000),
     background(":res/nebula_background.png")
 
 {
@@ -245,17 +245,19 @@ void MyWindow::updateProjection()
                             // lightning calculation
 
                             const double ambientLightning = 1.0;
-                            Point lightSourcePosition = Point(0, -0.5, 2.5);
+                            Point lightSourcePosition = Point(0.0, -1.5, -2.5);
                             const double lightSourceIntensity = 8.0;
                             double airClearness = 0.9;
 
-                            Point lightVector = lightSourcePosition - reflectionPoint;
+                            Point lightVector = reflectionPoint - lightSourcePosition;
                             lightVector = lightVector / lightVector.norm();
                             double lightNormalAngleCosine = normalVector * lightVector;
 
                             Point irisVector = irisPoint - reflectionPoint;
                             irisVector = irisVector / irisVector.norm();
-                            double lightEyeAngleCosine = irisVector * lightVector;
+                            Point reflectedLightVector = lightVector * (-1) + normalVector * ((lightVector * normalVector) * 2);
+                            reflectedLightVector = reflectedLightVector / reflectedLightVector.norm();
+                            double reflectedLightIrisAngleCosine = irisVector * reflectedLightVector;
 
                             double ambientReflectionCoeff = texture->ambientReflectionCoeff();
                             double dispersedReflectionCoeff = texture->dispersedReflectionCoeff();
@@ -270,9 +272,10 @@ void MyWindow::updateProjection()
 
                             double lightSourceCoeff = lightSourceIntensity * airClearness;
                             double lightningCoefficient = 0.0;
-                            lightningCoefficient += dispersedReflectionCoeff * lightNormalAngleCosine;
-                            if (lightEyeAngleCosine < 0.001)
-                                lightningCoefficient += directReflectionCoeff * pow(lightEyeAngleCosine, texture->surfaceSmoothnessCoeff());
+                            if (lightNormalAngleCosine > 0.0)
+                                lightningCoefficient += dispersedReflectionCoeff * lightNormalAngleCosine;
+                            if (reflectedLightIrisAngleCosine < 0.001)
+                                lightningCoefficient += directReflectionCoeff * pow(reflectedLightIrisAngleCosine, texture->surfaceSmoothnessCoeff());
                             lightningCoefficient *= lightSourceCoeff;
                             lightningCoefficient += ambientLightning * ambientReflectionCoeff;
                             if (lightningCoefficient < 0.0)
