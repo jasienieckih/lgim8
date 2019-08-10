@@ -300,7 +300,10 @@ void MyWindow::updateProjection()
                                 {
                                     for (int j = 0; j < 2; ++j)
                                     {
-                                        neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
+                                        if (ui->useTexturesCheckBox->isChecked())
+                                            neighbours[i][j] = inputBits[bitsCoords[i][j] + component];
+                                        else
+                                            neighbours[i][j] = 0x77;
                                     }
                                 }
                                 double interpolated[2];
@@ -572,6 +575,11 @@ void MyWindow::on_directReflectionSlider_valueChanged(int value)
 }
 
 void MyWindow::on_customLightCheckBox_clicked()
+{
+    updateProjection();
+}
+
+void MyWindow::on_useTexturesCheckBox_clicked()
 {
     updateProjection();
 }

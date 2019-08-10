@@ -130,6 +130,7 @@ private slots:
     void on_dispersedReflectionSlider_valueChanged(int value);
     void on_directReflectionSlider_valueChanged(int value);
     void on_customLightCheckBox_clicked();
+    void on_useTexturesCheckBox_clicked();
 };
 
 #endif // MYWINDOW_H
