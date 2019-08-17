@@ -94,6 +94,7 @@ private:
     Texture emeraldTrianglesTexture;
     Texture purpleTrianglesTexture;
     QImage background;
+    Point irisPoint;
 
     // task-specific methods
     void updateProjection();
@@ -102,6 +103,8 @@ private:
     int bitsCoordFromXy(int x, int y);
     int bitsCoordFromXy(int x, int y, int width);
 private slots:
+    void timerEvent(QTimerEvent *event);
+
     // Declarations of slots
     // A slot is a function that is called in response to a particular event,
     // eg. event associated with the GUI (mouse move, button press, etc.)

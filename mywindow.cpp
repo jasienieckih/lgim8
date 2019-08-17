@@ -57,6 +57,10 @@ MyWindow::MyWindow(QWidget *parent) :
     polygons.emplace_back(Polygon(&points[0], &points[2], &points[3], &purpleTrianglesTexture));
     polygons.emplace_back(Polygon(&points[1], &points[3], &points[2], &redTrianglesTexture));
 
+    startTimer(15);
+
+    irisPoint = Point(0.0, 0.0, -5.0);
+
     updateProjection();
 }
 
@@ -159,8 +163,7 @@ void MyWindow::updateProjection()
     projectionMatrix.set(1, 3, 300.0);
     projectionMatrix.set(2, 3, 300.0);
 
-    double distance = 5.0;
-    Point irisPoint = Point(0.0, 0.0, -distance);
+    double distance = -irisPoint.z();
 
     Matrix finalMatrix;
     finalMatrix = finalMatrix * translationMatrix;
@@ -331,6 +334,15 @@ void MyWindow::updateProjection()
     }
 
     update();
+}
+
+void MyWindow::timerEvent(QTimerEvent *event)
+{
+    irisPoint.setZ(irisPoint.z() + 0.05);
+
+    updateProjection();
+
+    event->setAccepted(true);
 }
 
 // Function (slot) called when user push the button 'Quit' (ExitButton)
