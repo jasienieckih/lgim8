@@ -27,7 +27,8 @@ MyWindow::MyWindow(QWidget *parent) :
     purpleTrianglesTexture(":res/purple_triangles.png",
                          Point(1633, 6, 1), Point(6, 1905, 1), Point(2656, 1532, 1),
                          0.2, 0.15, 0.6, 1000),
-    background(":res/nebula_background.png")
+    background(":res/nebula_background.png"),
+    velocityVector(0.0, 0.0, 0.0500000000001)
 
 {
     // Function creating GUI elements (defined in "ui_mywindow.h")
@@ -227,7 +228,7 @@ void MyWindow::updateProjection()
                     double reflectionPointToIrisDistance = reflectionPoint.distanceFrom(irisPoint);
 
                     Point irisVector = irisPoint - reflectionPoint;
-                    Point projectionPlaneNormalVector = Point(0.0, 0.0, 1.0);
+                    Point projectionPlaneNormalVector = velocityVector / velocityVector.norm();
                     double reflectionPointProjectionPlaneAngleCosine = projectionPlaneNormalVector * irisVector;
 
                     if (reflectionPointProjectionPlaneAngleCosine < 0.0
@@ -342,11 +343,27 @@ void MyWindow::updateProjection()
 
 void MyWindow::timerEvent(QTimerEvent *event)
 {
-    irisPoint.setZ(irisPoint.z() + 0.05);
+    irisPoint = irisPoint + velocityVector;
 
     updateProjection();
 
     event->setAccepted(true);
+}
+
+void MyWindow::keyPressEvent(QKeyEvent *event)
+{
+    const Point velocityStep = Point(0.0, 0.0, 0.01);
+    Point newVelocity;
+    switch (event->key())
+    {
+    case Qt::Key_A:
+        velocityVector = velocityVector + velocityStep;
+        break;
+    case Qt::Key_Z:
+        newVelocity = velocityVector - velocityStep;
+        velocityVector = (newVelocity.z() > 0.0) ? newVelocity : velocityVector;
+        break;
+    }
 }
 
 // Function (slot) called when user push the button 'Quit' (ExitButton)
