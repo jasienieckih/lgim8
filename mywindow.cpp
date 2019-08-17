@@ -226,7 +226,12 @@ void MyWindow::updateProjection()
                                           + originalPoints[2] * w;
                     double reflectionPointToIrisDistance = reflectionPoint.distanceFrom(irisPoint);
 
-                    if (reflectionPointToIrisDistance < zBuffer[x][y]
+                    Point irisVector = irisPoint - reflectionPoint;
+                    Point projectionPlaneNormalVector = Point(0.0, 0.0, 1.0);
+                    double reflectionPointProjectionPlaneAngleCosine = projectionPlaneNormalVector * irisVector;
+
+                    if (reflectionPointProjectionPlaneAngleCosine < 0.0
+                            and reflectionPointToIrisDistance < zBuffer[x][y]
                             and not (u < 0.0 or u > 1.0
                                      or v < 0.0 or v > 1.0
                                      or w < 0.0 or w > 1.0))
@@ -256,7 +261,6 @@ void MyWindow::updateProjection()
                             lightVector = lightVector / lightVector.norm();
                             double lightNormalAngleCosine = normalVector * lightVector;
 
-                            Point irisVector = irisPoint - reflectionPoint;
                             irisVector = irisVector / irisVector.norm();
                             Point reflectedLightVector = lightVector * (-1) + normalVector * ((lightVector * normalVector) * 2);
                             reflectedLightVector = reflectedLightVector / reflectedLightVector.norm();
